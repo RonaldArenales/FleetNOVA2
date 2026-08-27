@@ -1,0 +1,176 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  OPERATOR
+  VIEWER
+}
+
+enum VehicleStatus {
+  ACTIVE
+  MAINTENANCE
+  INACTIVE
+}
+
+enum MaintenanceStatus {
+  SCHEDULED
+  DONE
+  OVERDUE
+  CANCELLED
+}
+
+enum AlertLevel {
+  INFO
+  WARNING
+  CRITICAL
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(VIEWER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Vehicle {
+  id                   String   @id @default(uuid())
+  plate                String   @unique
+  brand                String
+  model                String
+  year                 Int
+  vin                  String?
+  status               VehicleStatus @default(ACTIVE)
+  odometerKm           Float    @default(0)
+  tireInstalledKm      Float    @default(0)
+  tireLifeKm           Float    @default(80000)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  drivers              VehicleDriver[]
+  gpsReadings          GpsReading[]
+  obdReadings          ObdReading[]
+  fuelLogs             FuelLog[]
+  maintenanceSchedules MaintenanceSchedule[]
+  maintenanceRecords   MaintenanceRecord[]
+  alerts               Alert[]
+}
+
+model Driver {
+  id            String   @id @default(uuid())
+  name          String
+  documentId    String   @unique
+  licenseNumber String
+  phone         String?
+  createdAt     DateTime @default(now())
+
+  vehicles      VehicleDriver[]
+}
+
+model VehicleDriver {
+  id         String   @id @default(uuid())
+  vehicleId  String
+  driverId   String
+  assignedAt DateTime @default(now())
+  active     Boolean  @default(true)
+
+  vehicle    Vehicle @relation(fields: [vehicleId], references: [id])
+  driver     Driver  @relation(fields: [driverId], references: [id])
+
+  @@index([vehicleId])
+  @@index([driverId])
+}
+
+model GpsReading {
+  id        String   @id @default(uuid())
+  vehicleId String
+  lat       Float
+  lng       Float
+  speedKph  Float
+  timestamp DateTime @default(now())
+
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
+
+  @@index([vehicleId, timestamp])
+}
+
+model ObdReading {
+  id             String   @id @default(uuid())
+  vehicleId      String
+  rpm            Int
+  engineTempC    Float
+  batteryVoltage Float
+  transmissionOk Boolean  @default(true)
+  engineOn       Boolean
+  odometerKm     Float
+  faultCodes     String[]
+  timestamp      DateTime @default(now())
+
+  vehicle        Vehicle @relation(fields: [vehicleId], references: [id])
+
+  @@index([vehicleId, timestamp])
+}
+
+model FuelLog {
+  id             String   @id @default(uuid())
+  vehicleId      String
+  litersAdded    Float
+  cost           Float?
+  odometerAtFill Float
+  timestamp      DateTime @default(now())
+
+  vehicle        Vehicle @relation(fields: [vehicleId], references: [id])
+
+  @@index([vehicleId, timestamp])
+}
+
+model MaintenanceSchedule {
+  id            String   @id @default(uuid())
+  vehicleId     String
+  type          String
+  dueDate       DateTime?
+  dueOdometerKm Float?
+  description   String?
+  status        MaintenanceStatus @default(SCHEDULED)
+  createdAt     DateTime @default(now())
+
+  vehicle       Vehicle @relation(fields: [vehicleId], references: [id])
+
+  @@index([vehicleId])
+}
+
+model MaintenanceRecord {
+  id          String   @id @default(uuid())
+  vehicleId   String
+  type        String
+  description String?
+  cost        Float?
+  odometerKm  Float
+  performedAt DateTime @default(now())
+
+  vehicle     Vehicle @relation(fields: [vehicleId], references: [id])
+
+  @@index([vehicleId])
+}
+
+model Alert {
+  id        String     @id @default(uuid())
+  vehicleId String
+  level     AlertLevel @default(INFO)
+  message   String
+  read      Boolean    @default(false)
+  createdAt DateTime   @default(now())
+
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
+
+  @@index([vehicleId])
+}
