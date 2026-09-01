@@ -43,7 +43,7 @@ export function DriverFormModal({
         <div>
           <label className="mb-1 block text-sm font-medium text-gray-700">Nombre completo</label>
           <input
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="field-input w-full"
             {...register('name', { required: 'El nombre es obligatorio' })}
           />
           {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name.message}</p>}
@@ -51,7 +51,7 @@ export function DriverFormModal({
         <div>
           <label className="mb-1 block text-sm font-medium text-gray-700">Documento de identidad</label>
           <input
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="field-input w-full"
             {...register('documentId', { required: 'El documento es obligatorio' })}
           />
           {errors.documentId && <p className="mt-1 text-xs text-red-600">{errors.documentId.message}</p>}
@@ -59,14 +59,14 @@ export function DriverFormModal({
         <div>
           <label className="mb-1 block text-sm font-medium text-gray-700">Número de licencia</label>
           <input
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="field-input w-full"
             {...register('licenseNumber', { required: 'La licencia es obligatoria' })}
           />
           {errors.licenseNumber && <p className="mt-1 text-xs text-red-600">{errors.licenseNumber.message}</p>}
         </div>
         <div>
           <label className="mb-1 block text-sm font-medium text-gray-700">Teléfono (opcional)</label>
-          <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" {...register('phone')} />
+          <input className="field-input w-full" {...register('phone')} />
         </div>
 
         {errorMessage && <div className="rounded-md bg-red-50 p-2 text-sm text-red-700">{errorMessage}</div>}
@@ -75,14 +75,14 @@ export function DriverFormModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+            className="btn-secondary"
           >
             Cancelar
           </button>
           <button
             type="submit"
             disabled={submitting}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
+            className="btn-primary"
           >
             {submitting ? 'Guardando...' : 'Guardar'}
           </button>

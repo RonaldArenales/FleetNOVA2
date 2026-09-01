@@ -132,6 +132,32 @@ async function main() {
     drivers.push(driver);
   }
 
+  // --- Cuentas de acceso para conductores (rol DRIVER) --------------------
+  const driverPassword = "conductor123";
+  const driverPasswordHash = await bcrypt.hash(driverPassword, 10);
+  const slugify = (name: string) =>
+    name
+      .normalize("NFD")
+      .replace(/\p{Diacritic}/gu, "")
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, ".");
+
+  for (const driver of drivers) {
+    const email = `${slugify(driver.name)}@fleetnova.com`;
+    await prisma.user.upsert({
+      where: { email },
+      update: { driverId: driver.id },
+      create: {
+        name: driver.name,
+        email,
+        passwordHash: driverPasswordHash,
+        role: Role.DRIVER,
+        driverId: driver.id,
+      },
+    });
+  }
+
   // --- Asignaciones vehiculo-conductor ------------------------------------
   for (let i = 0; i < vehicles.length; i++) {
     const vehicle = vehicles[i];

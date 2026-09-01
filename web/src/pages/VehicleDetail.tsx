@@ -41,7 +41,7 @@ export function VehicleDetail() {
       return data;
     },
     enabled: !!id,
-    refetchInterval: 30000,
+    refetchInterval: 2000,
   });
 
   const updateMutation = useMutation({
@@ -64,7 +64,7 @@ export function VehicleDetail() {
 
   return (
     <div className="space-y-6">
-      <button type="button" onClick={() => navigate('/vehiculos')} className="text-sm text-blue-600 hover:underline">
+      <button type="button" onClick={() => navigate('/vehiculos')} className="text-sm link-action">
         ← Volver a vehículos
       </button>
 
@@ -73,10 +73,10 @@ export function VehicleDetail() {
 
       {vehicleQuery.data && (
         <>
-          <div className="flex flex-wrap items-start justify-between gap-4 rounded-lg bg-white p-5 shadow-sm">
+          <div className="flex flex-wrap items-start justify-between gap-4 card p-5">
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-2xl font-bold text-gray-800">{vehicleQuery.data.plate}</h1>
+                <h1 className="text-3xl font-bold tracking-tight text-gray-900">{vehicleQuery.data.plate}</h1>
                 <VehicleStatusBadge status={vehicleQuery.data.status} />
               </div>
               <p className="mt-1 text-sm text-gray-500">
@@ -92,7 +92,7 @@ export function VehicleDetail() {
                   setFormError(null);
                   setEditing(true);
                 }}
-                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+                className="btn-secondary"
               >
                 Editar vehículo
               </button>
@@ -127,7 +127,7 @@ export function VehicleDetail() {
 
       {!vehicleQuery.isLoading && !vehicleQuery.data && !vehicleQuery.isError && (
         <p className="text-sm text-gray-500">
-          Vehículo no encontrado. <Link to="/vehiculos" className="text-blue-600 hover:underline">Volver</Link>
+          Vehículo no encontrado. <Link to="/vehiculos" className="link-action">Volver</Link>
         </p>
       )}
     </div>

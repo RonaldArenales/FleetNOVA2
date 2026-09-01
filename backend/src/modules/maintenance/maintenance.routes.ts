@@ -4,12 +4,18 @@ import { MaintenanceStatus } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
 import { validateBody } from "../../utils/validate";
 import { asyncHandler } from "../../utils/asyncHandler";
-import { requireAuth, requireRole } from "../../middleware/auth";
-import { notFound } from "../../utils/httpError";
+import { requireAuth, requireRole, requireStaff } from "../../middleware/auth";
+import { badRequest, notFound } from "../../utils/httpError";
 
 // Mounted at /api/vehicles/:id in index.ts (mergeParams needed to read :id).
 export const vehicleMaintenanceRouter = Router({ mergeParams: true });
-vehicleMaintenanceRouter.use(requireAuth);
+vehicleMaintenanceRouter.use(requireAuth, requireStaff);
+
+function parseId(raw: string, message: string): number {
+  const id = Number(raw);
+  if (!Number.isInteger(id)) throw badRequest(message);
+  return id;
+}
 
 const scheduleCreateSchema = z.object({
   type: z.string().min(1, "El tipo es requerido"),
@@ -31,7 +37,7 @@ const recordCreateSchema = z.object({
 vehicleMaintenanceRouter.get(
   "/maintenance-schedules",
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const id = parseId(req.params.id, 'Identificador de vehiculo invalido');
     const vehicle = await prisma.vehicle.findUnique({ where: { id } });
     if (!vehicle) throw notFound("Vehiculo no encontrado");
 
@@ -49,7 +55,7 @@ vehicleMaintenanceRouter.post(
   requireRole("ADMIN", "OPERATOR"),
   validateBody(scheduleCreateSchema),
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const id = parseId(req.params.id, 'Identificador de vehiculo invalido');
     const vehicle = await prisma.vehicle.findUnique({ where: { id } });
     if (!vehicle) throw notFound("Vehiculo no encontrado");
 
@@ -74,7 +80,7 @@ vehicleMaintenanceRouter.post(
 vehicleMaintenanceRouter.get(
   "/maintenance-records",
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const id = parseId(req.params.id, 'Identificador de vehiculo invalido');
     const vehicle = await prisma.vehicle.findUnique({ where: { id } });
     if (!vehicle) throw notFound("Vehiculo no encontrado");
 
@@ -92,7 +98,7 @@ vehicleMaintenanceRouter.post(
   requireRole("ADMIN", "OPERATOR"),
   validateBody(recordCreateSchema),
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const id = parseId(req.params.id, 'Identificador de vehiculo invalido');
     const vehicle = await prisma.vehicle.findUnique({ where: { id } });
     if (!vehicle) throw notFound("Vehiculo no encontrado");
 
@@ -117,7 +123,7 @@ vehicleMaintenanceRouter.post(
 
 // Mounted at /api/maintenance-schedules in index.ts.
 export const maintenanceSchedulesRouter = Router();
-maintenanceSchedulesRouter.use(requireAuth);
+maintenanceSchedulesRouter.use(requireAuth, requireStaff);
 
 const scheduleUpdateSchema = z.object({
   type: z.string().optional(),
@@ -133,7 +139,7 @@ maintenanceSchedulesRouter.patch(
   requireRole("ADMIN", "OPERATOR"),
   validateBody(scheduleUpdateSchema),
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const id = parseId(req.params.id, 'Identificador de programacion de mantenimiento invalido');
     const existing = await prisma.maintenanceSchedule.findUnique({ where: { id } });
     if (!existing) throw notFound("Programacion de mantenimiento no encontrada");
 

@@ -37,7 +37,7 @@ export function VehicleMap({
           <Popup>
             {plate}
             <br />
-            Velocidad: {speedKph} km/h
+            Velocidad: {speedKph.toFixed(2)} km/h
           </Popup>
         </Marker>
       </MapContainer>

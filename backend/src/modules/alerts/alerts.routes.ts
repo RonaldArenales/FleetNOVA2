@@ -2,12 +2,12 @@ import { Router } from "express";
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
 import { asyncHandler } from "../../utils/asyncHandler";
-import { requireAuth } from "../../middleware/auth";
-import { notFound } from "../../utils/httpError";
+import { requireAuth, requireStaff } from "../../middleware/auth";
+import { badRequest, notFound } from "../../utils/httpError";
 
 const router = Router();
 
-router.use(requireAuth);
+router.use(requireAuth, requireStaff);
 
 // GET /api/alerts?vehicleId=&unread=true
 router.get(
@@ -17,7 +17,7 @@ router.get(
     const unread = req.query.unread as string | undefined;
 
     const where: Prisma.AlertWhereInput = {};
-    if (vehicleId) where.vehicleId = vehicleId;
+    if (vehicleId) where.vehicleId = Number(vehicleId);
     if (unread === "true") where.read = false;
 
     const alerts = await prisma.alert.findMany({
@@ -32,7 +32,9 @@ router.get(
 router.patch(
   "/:id/read",
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id)) throw badRequest("Identificador de alerta invalido");
+
     const existing = await prisma.alert.findUnique({ where: { id } });
     if (!existing) throw notFound("Alerta no encontrada");
 

@@ -17,10 +17,7 @@ backend/.env
 web/node_modules/
 web/dist/
 
-# mobile (flutter)
-mobile/.dart_tool/
-mobile/.flutter-plugin-registry/
-mobile/build/
-mobile/.pub-cache/
-mobile/.pub/
-mobile/android/.gradle/
+# mobile (PWA)
+mobile/node_modules/
+mobile/dist/
+mobile/.env

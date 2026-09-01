@@ -38,7 +38,7 @@ export function UserFormModal({
         <div>
           <label className="mb-1 block text-sm font-medium text-gray-700">Nombre completo</label>
           <input
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="field-input w-full"
             {...register('name', { required: 'El nombre es obligatorio' })}
           />
           {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name.message}</p>}
@@ -47,7 +47,7 @@ export function UserFormModal({
           <label className="mb-1 block text-sm font-medium text-gray-700">Correo electrónico</label>
           <input
             type="email"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="field-input w-full"
             {...register('email', { required: 'El correo es obligatorio' })}
           />
           {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>}
@@ -58,14 +58,14 @@ export function UserFormModal({
           </label>
           <input
             type="password"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="field-input w-full"
             {...register('password', { required: initial ? false : 'La contraseña es obligatoria' })}
           />
           {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>}
         </div>
         <div>
           <label className="mb-1 block text-sm font-medium text-gray-700">Rol</label>
-          <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" {...register('role')}>
+          <select className="field-input w-full" {...register('role')}>
             <option value="ADMIN">Administrador</option>
             <option value="OPERATOR">Operador</option>
             <option value="VIEWER">Observador</option>
@@ -78,14 +78,14 @@ export function UserFormModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+            className="btn-secondary"
           >
             Cancelar
           </button>
           <button
             type="submit"
             disabled={submitting}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
+            className="btn-primary"
           >
             {submitting ? 'Guardando...' : 'Guardar'}
           </button>

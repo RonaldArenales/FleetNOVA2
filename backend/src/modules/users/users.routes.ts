@@ -6,7 +6,7 @@ import { prisma } from "../../lib/prisma";
 import { validateBody } from "../../utils/validate";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { requireAuth, requireRole } from "../../middleware/auth";
-import { notFound } from "../../utils/httpError";
+import { badRequest, notFound } from "../../utils/httpError";
 
 const router = Router();
 
@@ -68,7 +68,8 @@ router.patch(
   "/:id",
   validateBody(updateUserSchema),
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id)) throw badRequest("Identificador de usuario invalido");
     const { password, ...rest } = req.body as z.infer<typeof updateUserSchema>;
 
     const existing = await prisma.user.findUnique({ where: { id } });
@@ -86,6 +87,14 @@ router.patch(
       data,
       select: selectFields,
     });
+
+    // Si esta cuenta esta vinculada a un conductor, el nombre debe
+    // mantenerse igual en ambos lados (ver tambien drivers.routes.ts, que
+    // hace la sincronizacion en sentido contrario).
+    if (rest.name && existing.driverId) {
+      await prisma.driver.update({ where: { id: existing.driverId }, data: { name: rest.name } });
+    }
+
     res.json(user);
   })
 );
@@ -94,7 +103,8 @@ router.patch(
 router.delete(
   "/:id",
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id)) throw badRequest("Identificador de usuario invalido");
     const existing = await prisma.user.findUnique({ where: { id } });
     if (!existing) {
       throw notFound("Usuario no encontrado");

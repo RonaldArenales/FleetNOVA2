@@ -2,12 +2,12 @@ import { Router } from "express";
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
 import { asyncHandler } from "../../utils/asyncHandler";
-import { requireAuth } from "../../middleware/auth";
+import { requireAuth, requireStaff } from "../../middleware/auth";
 import { computeTrips } from "../../utils/trips";
 
 const router = Router();
 
-router.use(requireAuth);
+router.use(requireAuth, requireStaff);
 
 // GET /api/reports/fleet?from=&to=
 // Reporte agregado por vehiculo: distancia total (via viajes), combustible
@@ -19,7 +19,11 @@ router.get(
     const to = req.query.to as string | undefined;
 
     const fromDate = from ? new Date(from) : new Date(0);
-    const toDate = to ? new Date(to) : new Date();
+    // Un "to" de solo fecha (ej. "2026-09-01", como envia el selector de
+    // fecha del panel) se interpreta como medianoche UTC de ese dia, lo que
+    // dejaria fuera todo lo ocurrido despues de esa hora en el mismo dia.
+    // Se ajusta al final del dia para que el rango incluya el dia completo.
+    const toDate = to ? new Date(`${to}T23:59:59.999Z`) : new Date();
 
     const dateFilter: Prisma.DateTimeFilter = { gte: fromDate, lte: toDate };
 

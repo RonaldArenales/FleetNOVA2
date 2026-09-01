@@ -70,7 +70,7 @@ export function Users() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
+    mutationFn: async (id: number) => {
       await api.delete(`/users/${id}`);
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['users'] }),
@@ -86,21 +86,32 @@ export function Users() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">Usuarios</h1>
-          <p className="text-sm text-gray-500">Cuentas con acceso a la plataforma</p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="icon-badge">
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900">Usuarios</h1>
+            <p className="text-sm text-gray-500">Cuentas con acceso a la plataforma</p>
+          </div>
         </div>
         <button
           type="button"
           onClick={() => setShowCreate(true)}
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          className="btn-primary"
         >
           + Nuevo usuario
         </button>
       </div>
 
-      <div className="overflow-hidden rounded-lg bg-white shadow-sm">
+      <div className="card overflow-hidden">
         {usersQuery.isLoading && <LoadingState label="Cargando usuarios..." />}
         {usersQuery.isError && (
           <div className="p-4">
@@ -113,6 +124,7 @@ export function Users() {
           </div>
         )}
         {usersQuery.data && usersQuery.data.length > 0 && (
+          <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="bg-gray-50 text-xs uppercase text-gray-500">
               <tr>
@@ -137,7 +149,7 @@ export function Users() {
                         setFormError(null);
                         setEditing(u);
                       }}
-                      className="mr-3 text-blue-600 hover:underline"
+                      className="mr-3 link-action"
                     >
                       Editar
                     </button>
@@ -149,7 +161,7 @@ export function Users() {
                           deleteMutation.mutate(u.id);
                         }
                       }}
-                      className="text-red-600 hover:underline disabled:cursor-not-allowed disabled:text-gray-300"
+                      className="link-danger disabled:cursor-not-allowed disabled:text-gray-300 disabled:hover:no-underline"
                     >
                       Eliminar
                     </button>
@@ -158,6 +170,7 @@ export function Users() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 

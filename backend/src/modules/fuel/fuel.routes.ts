@@ -3,13 +3,19 @@ import { z } from "zod";
 import { prisma } from "../../lib/prisma";
 import { validateBody } from "../../utils/validate";
 import { asyncHandler } from "../../utils/asyncHandler";
-import { requireAuth } from "../../middleware/auth";
-import { notFound } from "../../utils/httpError";
+import { requireAuth, requireStaff } from "../../middleware/auth";
+import { badRequest, notFound } from "../../utils/httpError";
 
 // Mounted at /api/vehicles/:id/fuel-... in index.ts (mergeParams needed).
 const router = Router({ mergeParams: true });
 
-router.use(requireAuth);
+router.use(requireAuth, requireStaff);
+
+function parseVehicleId(raw: string): number {
+  const id = Number(raw);
+  if (!Number.isInteger(id)) throw badRequest("Identificador de vehiculo invalido");
+  return id;
+}
 
 const fuelLogSchema = z.object({
   litersAdded: z.number().positive("litersAdded debe ser mayor que 0"),
@@ -21,7 +27,7 @@ const fuelLogSchema = z.object({
 router.get(
   "/fuel-logs",
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const id = parseVehicleId(req.params.id);
     const vehicle = await prisma.vehicle.findUnique({ where: { id } });
     if (!vehicle) throw notFound("Vehiculo no encontrado");
 
@@ -38,7 +44,7 @@ router.post(
   "/fuel-logs",
   validateBody(fuelLogSchema),
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const id = parseVehicleId(req.params.id);
     const vehicle = await prisma.vehicle.findUnique({ where: { id } });
     if (!vehicle) throw notFound("Vehiculo no encontrado");
 
@@ -54,7 +60,7 @@ router.post(
 router.get(
   "/fuel-consumption",
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const id = parseVehicleId(req.params.id);
     const vehicle = await prisma.vehicle.findUnique({ where: { id } });
     if (!vehicle) throw notFound("Vehiculo no encontrado");
 

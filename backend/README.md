@@ -99,12 +99,15 @@ npm run simulate
 ```
 
 Este script (`src/scripts/simulate.ts`) lee los vehiculos con
-`status = ACTIVE` desde la base de datos, simula una posicion GPS con
-caminata aleatoria cerca de Bucaramanga, Colombia, y cada 5 segundos envia
-telemetria a `/api/telemetry/gps` (siempre) y `/api/telemetry/obd`
-(aproximadamente cada 3er tick), autenticandose con el header
-`x-device-key` (valor de `DEVICE_API_KEY` en `.env`). Ocasionalmente simula
-temperaturas de motor elevadas, voltaje de bateria bajo y codigos de falla
+`status = ACTIVE` desde la base de datos y hace que cada uno recorra una
+ruta real de Bucaramanga (obtenida de OSRM, codificada como polyline),
+respetando calles reales en vez de caminar al azar; al llegar al final de
+su ruta, el vehiculo invierte el sentido y regresa por la misma via. Cada
+2 segundos envia telemetria a `/api/telemetry/gps` (siempre) y
+`/api/telemetry/obd` (aproximadamente cada 3er tick), autenticandose con
+el header `x-device-key` (valor de `DEVICE_API_KEY` en `.env`).
+Ocasionalmente simula temperaturas de motor elevadas, voltaje de bateria
+bajo y codigos de falla
 para disparar alertas automaticas. Corre indefinidamente hasta Ctrl+C.
 
 ## Endpoints de la API

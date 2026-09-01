@@ -1,9 +1,9 @@
 // Tipos compartidos que reflejan el contrato de la API del backend.
 
-export type Role = 'ADMIN' | 'OPERATOR' | 'VIEWER';
+export type Role = 'ADMIN' | 'OPERATOR' | 'VIEWER' | 'DRIVER';
 
 export interface User {
-  id: string;
+  id: number;
   name: string;
   email: string;
   role: Role;
@@ -18,7 +18,7 @@ export interface LoginResponse {
 export type VehicleStatus = 'ACTIVE' | 'MAINTENANCE' | 'INACTIVE';
 
 export interface Vehicle {
-  id: string;
+  id: number;
   plate: string;
   brand: string;
   model: string;
@@ -40,7 +40,7 @@ export interface GpsPoint {
 }
 
 export interface GpsHistoryPoint extends GpsPoint {
-  id: string;
+  id: number;
 }
 
 export interface ObdData {
@@ -55,7 +55,7 @@ export interface ObdData {
 }
 
 export interface VehicleStatusResponse {
-  vehicleId: string;
+  vehicleId: number;
   gps: GpsPoint | null;
   obd: ObdData | null;
 }
@@ -76,7 +76,7 @@ export interface Trip {
 }
 
 export interface Driver {
-  id: string;
+  id: number;
   name: string;
   documentId: string;
   licenseNumber: string;
@@ -85,19 +85,19 @@ export interface Driver {
 }
 
 export interface FuelLog {
-  id: string;
+  id: number;
   litersAdded: number;
   cost?: number | null;
   odometerAtFill: number;
   timestamp: string;
 }
 
-export type FuelConsumption = { litersPer100km: number } | { message: string };
+export type FuelConsumption = { litersPer100Km: number } | { message: string };
 
 export type MaintenanceScheduleStatus = 'SCHEDULED' | 'DONE' | 'OVERDUE' | 'CANCELLED';
 
 export interface MaintenanceSchedule {
-  id: string;
+  id: number;
   type: string;
   dueDate?: string | null;
   dueOdometerKm?: number | null;
@@ -106,7 +106,7 @@ export interface MaintenanceSchedule {
 }
 
 export interface MaintenanceRecord {
-  id: string;
+  id: number;
   type: string;
   description?: string | null;
   cost?: number | null;
@@ -117,8 +117,8 @@ export interface MaintenanceRecord {
 export type AlertLevel = 'INFO' | 'WARNING' | 'CRITICAL';
 
 export interface Alert {
-  id: string;
-  vehicleId: string;
+  id: number;
+  vehicleId: number;
   level: AlertLevel;
   message: string;
   read: boolean;
@@ -134,7 +134,7 @@ export interface DashboardSummary {
 }
 
 export interface FleetReportVehicle {
-  vehicleId: string;
+  vehicleId: number;
   plate: string;
   totalDistanceKm: number;
   fuelConsumedLiters: number;

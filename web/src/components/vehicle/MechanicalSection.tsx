@@ -27,8 +27,8 @@ export function MechanicalSection({ obd }: { obd: ObdData | null }) {
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Metric label="RPM" value={obd.rpm.toLocaleString('es')} />
-            <Metric label="Temp. motor" value={`${obd.engineTempC} °C`} />
-            <Metric label="Voltaje batería" value={`${obd.batteryVoltage} V`} />
+            <Metric label="Temp. motor" value={`${obd.engineTempC.toFixed(1)} °C`} />
+            <Metric label="Voltaje batería" value={`${obd.batteryVoltage.toFixed(1)} V`} />
             <Metric label="Odómetro OBD" value={`${obd.odometerKm.toLocaleString('es')} km`} />
           </div>
 

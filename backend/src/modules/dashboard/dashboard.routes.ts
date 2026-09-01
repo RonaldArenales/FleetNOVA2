@@ -2,11 +2,11 @@ import { Router } from "express";
 import { VehicleStatus, MaintenanceStatus } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
 import { asyncHandler } from "../../utils/asyncHandler";
-import { requireAuth } from "../../middleware/auth";
+import { requireAuth, requireStaff } from "../../middleware/auth";
 
 const router = Router();
 
-router.use(requireAuth);
+router.use(requireAuth, requireStaff);
 
 // GET /api/dashboard/summary
 router.get(

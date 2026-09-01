@@ -4,7 +4,7 @@ import { VehicleStatus, Prisma } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
 import { validateBody } from "../../utils/validate";
 import { asyncHandler } from "../../utils/asyncHandler";
-import { requireAuth, requireRole } from "../../middleware/auth";
+import { requireAuth, requireRole, requireStaff } from "../../middleware/auth";
 import { badRequest, notFound } from "../../utils/httpError";
 import { computeTrips } from "../../utils/trips";
 
@@ -12,7 +12,13 @@ const router = Router();
 
 // All routes require a logged-in user; writes are additionally
 // restricted to ADMIN/OPERATOR below.
-router.use(requireAuth);
+router.use(requireAuth, requireStaff);
+
+function parseVehicleId(raw: string): number {
+  const id = Number(raw);
+  if (!Number.isInteger(id)) throw badRequest("Identificador de vehiculo invalido");
+  return id;
+}
 
 const vehicleCreateSchema = z.object({
   plate: z.string().min(1, "La placa es requerida"),
@@ -29,7 +35,7 @@ const vehicleCreateSchema = z.object({
 const vehicleUpdateSchema = vehicleCreateSchema.partial();
 
 const assignDriverSchema = z.object({
-  driverId: z.string().min(1, "driverId es requerido"),
+  driverId: z.coerce.number().int("driverId debe ser un numero"),
 });
 
 // GET /api/vehicles?plate=&status=   (RF13 - filtro de vehiculos)
@@ -62,7 +68,8 @@ router.get(
 router.get(
   "/:id",
   asyncHandler(async (req, res) => {
-    const vehicle = await prisma.vehicle.findUnique({ where: { id: req.params.id } });
+    const id = parseVehicleId(req.params.id);
+    const vehicle = await prisma.vehicle.findUnique({ where: { id } });
     if (!vehicle) throw notFound("Vehiculo no encontrado");
     res.json(vehicle);
   })
@@ -85,11 +92,12 @@ router.patch(
   requireRole("ADMIN", "OPERATOR"),
   validateBody(vehicleUpdateSchema),
   asyncHandler(async (req, res) => {
-    const existing = await prisma.vehicle.findUnique({ where: { id: req.params.id } });
+    const id = parseVehicleId(req.params.id);
+    const existing = await prisma.vehicle.findUnique({ where: { id } });
     if (!existing) throw notFound("Vehiculo no encontrado");
 
     const vehicle = await prisma.vehicle.update({
-      where: { id: req.params.id },
+      where: { id },
       data: req.body,
     });
     res.json(vehicle);
@@ -101,9 +109,10 @@ router.delete(
   "/:id",
   requireRole("ADMIN", "OPERATOR"),
   asyncHandler(async (req, res) => {
-    const existing = await prisma.vehicle.findUnique({ where: { id: req.params.id } });
+    const id = parseVehicleId(req.params.id);
+    const existing = await prisma.vehicle.findUnique({ where: { id } });
     if (!existing) throw notFound("Vehiculo no encontrado");
-    await prisma.vehicle.delete({ where: { id: req.params.id } });
+    await prisma.vehicle.delete({ where: { id } });
     res.status(204).send();
   })
 );
@@ -112,7 +121,7 @@ router.delete(
 router.get(
   "/:id/status",
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const id = parseVehicleId(req.params.id);
     const vehicle = await prisma.vehicle.findUnique({ where: { id } });
     if (!vehicle) throw notFound("Vehiculo no encontrado");
 
@@ -129,7 +138,7 @@ router.get(
 router.get(
   "/:id/tire-wear",
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const id = parseVehicleId(req.params.id);
     const vehicle = await prisma.vehicle.findUnique({ where: { id } });
     if (!vehicle) throw notFound("Vehiculo no encontrado");
 
@@ -151,7 +160,7 @@ router.get(
 router.get(
   "/:id/gps-history",
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const id = parseVehicleId(req.params.id);
     const from = req.query.from as string | undefined;
     const to = req.query.to as string | undefined;
     const limit = req.query.limit as string | undefined;
@@ -181,7 +190,7 @@ router.get(
 router.get(
   "/:id/trips",
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const id = parseVehicleId(req.params.id);
     const vehicle = await prisma.vehicle.findUnique({ where: { id } });
     if (!vehicle) throw notFound("Vehiculo no encontrado");
 
@@ -204,7 +213,7 @@ router.post(
   requireRole("ADMIN", "OPERATOR"),
   validateBody(assignDriverSchema),
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const id = parseVehicleId(req.params.id);
     const { driverId } = req.body as z.infer<typeof assignDriverSchema>;
 
     const [vehicle, driver] = await Promise.all([

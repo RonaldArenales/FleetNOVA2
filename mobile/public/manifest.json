@@ -1,0 +1,20 @@
+{
+  "name": "FleetNova Conductor",
+  "short_name": "FleetNova",
+  "description": "Consulta tu vehículo, ubicación, mantenimientos y alertas.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b1420",
+  "theme_color": "#4f46e5",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

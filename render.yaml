@@ -1,12 +1,6 @@
-databases:
-  - name: fleetnova-ronald-db
-    plan: free
-    databaseName: fleetnova
-    user: fleetnova
-
 services:
   - type: web
-    name: fleetnova-ronald-api
+    name: fleetnova2-api
     runtime: node
     plan: free
     rootDir: backend
@@ -15,28 +9,57 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 20.18.0
+      - key: NPM_CONFIG_PRODUCTION
+        value: "false"
+      # Cadenas de conexion de Neon (Dashboard de Neon -> Connection Details).
+      # Se dejan sin valor aqui a proposito: Render pedira completarlas a
+      # mano al importar este blueprint, para no subir credenciales al repo.
       - key: DATABASE_URL
-        fromDatabase:
-          name: fleetnova-ronald-db
-          property: connectionString
+        sync: false
+      - key: DIRECT_URL
+        sync: false
       - key: JWT_SECRET
         generateValue: true
       - key: DEVICE_API_KEY
         generateValue: true
       - key: CORS_ORIGIN
-        value: https://fleetnova-ronald-app.onrender.com
+        value: https://fleetnova2-app.onrender.com,https://fleetnova2-conductor.onrender.com
 
   - type: web
-    name: fleetnova-ronald-app
+    name: fleetnova2-app
     runtime: static
     rootDir: web
-    buildCommand: npm install && npm run build
+    buildCommand: rm -rf node_modules package-lock.json && npm install && npm run build
     staticPublishPath: dist
     envVars:
       - key: NODE_VERSION
         value: 20.18.0
+      - key: NPM_CONFIG_PRODUCTION
+        value: "false"
       - key: VITE_API_URL
-        value: https://fleetnova-ronald-api.onrender.com/api
+        value: https://fleetnova2-api.onrender.com/api
+      - key: VITE_MOBILE_APP_URL
+        value: https://fleetnova2-conductor.onrender.com
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  - type: web
+    name: fleetnova2-conductor
+    runtime: static
+    rootDir: mobile
+    buildCommand: rm -rf node_modules package-lock.json && npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: NODE_VERSION
+        value: 20.18.0
+      - key: NPM_CONFIG_PRODUCTION
+        value: "false"
+      - key: VITE_API_URL
+        value: https://fleetnova2-api.onrender.com/api
+      - key: VITE_WEB_APP_URL
+        value: https://fleetnova2-app.onrender.com
     routes:
       - type: rewrite
         source: /*

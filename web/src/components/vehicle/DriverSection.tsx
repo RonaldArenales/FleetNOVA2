@@ -48,7 +48,7 @@ export function DriverSection({ vehicleId, canWrite }: { vehicleId: string; canW
               <select
                 value={selectedDriverId}
                 onChange={(e) => setSelectedDriverId(e.target.value)}
-                className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className="field-input"
               >
                 <option value="">Selecciona un conductor...</option>
                 {driversQuery.data.map((d) => (
@@ -61,7 +61,7 @@ export function DriverSection({ vehicleId, canWrite }: { vehicleId: string; canW
                 type="button"
                 disabled={!selectedDriverId || assignMutation.isPending}
                 onClick={() => selectedDriverId && assignMutation.mutate(selectedDriverId)}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
+                className="btn-primary"
               >
                 {assignMutation.isPending ? 'Asignando...' : 'Asignar conductor'}
               </button>

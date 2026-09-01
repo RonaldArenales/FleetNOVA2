@@ -4,7 +4,7 @@ import { Role } from "@prisma/client";
 import { unauthorized, forbidden } from "../utils/httpError";
 
 interface JwtPayload {
-  userId: string;
+  userId: number;
   role: Role;
 }
 
@@ -48,3 +48,10 @@ export const requireRole =
     }
     next();
   };
+
+/**
+ * Restricts a router to the "actor Administrador" (ADMIN/OPERATOR/VIEWER):
+ * the staff-facing web platform. Role.DRIVER is a separate actor scoped
+ * exclusively to /api/driver/*, so it must never reach these routes.
+ */
+export const requireStaff = requireRole("ADMIN", "OPERATOR", "VIEWER");

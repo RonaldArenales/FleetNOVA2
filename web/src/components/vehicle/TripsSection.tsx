@@ -44,7 +44,7 @@ export function TripsSection({ vehicleId }: { vehicleId: string }) {
                 <td className="px-3 py-2 text-gray-600">{formatDate(trip.startTime)}</td>
                 <td className="px-3 py-2 text-gray-600">{formatDate(trip.endTime)}</td>
                 <td className="px-3 py-2 text-gray-600">{trip.distanceKm.toFixed(1)} km</td>
-                <td className="px-3 py-2 text-gray-600">{trip.durationMinutes} min</td>
+                <td className="px-3 py-2 text-gray-600">{Math.round(trip.durationMinutes)} min</td>
                 <td className="px-3 py-2 text-gray-600">{trip.avgSpeedKph.toFixed(1)} km/h</td>
               </tr>
             ))}

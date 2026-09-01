@@ -72,7 +72,7 @@ export function Vehicles() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
+    mutationFn: async (id: number) => {
       await api.delete(`/vehicles/${id}`);
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['vehicles'] }),
@@ -80,34 +80,41 @@ export function Vehicles() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">Vehículos</h1>
-          <p className="text-sm text-gray-500">Administra la flota de camiones</p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="icon-badge">
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.25h5.25M3 12h12.75" />
+            </svg>
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900">Vehículos</h1>
+            <p className="text-sm text-gray-500">Administra la flota de camiones</p>
+          </div>
         </div>
         {canWrite && (
           <button
             type="button"
             onClick={() => setShowCreate(true)}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            className="btn-primary"
           >
             + Nuevo vehículo
           </button>
         )}
       </div>
 
-      <div className="flex flex-wrap gap-3">
+      <div className="card flex flex-wrap gap-3 p-4">
         <input
           type="text"
           placeholder="Buscar por placa..."
           value={plateInput}
           onChange={(e) => setPlateInput(e.target.value)}
-          className="w-64 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="field-input w-full sm:w-64"
         />
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value as VehicleStatus | '')}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="field-input"
         >
           {statusOptions.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -117,7 +124,7 @@ export function Vehicles() {
         </select>
       </div>
 
-      <div className="overflow-hidden rounded-lg bg-white shadow-sm">
+      <div className="card overflow-hidden">
         {vehiclesQuery.isLoading && <LoadingState label="Cargando vehículos..." />}
         {vehiclesQuery.isError && (
           <div className="p-4">
@@ -167,7 +174,7 @@ export function Vehicles() {
                           setFormError(null);
                           setEditing(v);
                         }}
-                        className="mr-3 text-blue-600 hover:underline"
+                        className="mr-3 link-action"
                       >
                         Editar
                       </button>
@@ -179,7 +186,7 @@ export function Vehicles() {
                             deleteMutation.mutate(v.id);
                           }
                         }}
-                        className="text-red-600 hover:underline"
+                        className="link-danger"
                       >
                         Eliminar
                       </button>

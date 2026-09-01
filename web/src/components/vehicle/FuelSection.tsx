@@ -61,10 +61,10 @@ export function FuelSection({ vehicleId }: { vehicleId: string }) {
       <div className="mb-4">
         {consumptionQuery.isLoading && <LoadingState label="Calculando consumo..." />}
         {consumptionQuery.isError && <ErrorState error={consumptionQuery.error} />}
-        {consumptionQuery.data && 'litersPer100km' in consumptionQuery.data && (
+        {consumptionQuery.data && 'litersPer100Km' in consumptionQuery.data && (
           <p className="text-sm text-gray-700">
             Consumo estimado:{' '}
-            <span className="font-semibold text-gray-900">{consumptionQuery.data.litersPer100km.toFixed(2)} L/100km</span>
+            <span className="font-semibold text-gray-900">{consumptionQuery.data.litersPer100Km.toFixed(2)} L/100km</span>
           </p>
         )}
         {consumptionQuery.data && 'message' in consumptionQuery.data && (
@@ -115,7 +115,7 @@ export function FuelSection({ vehicleId }: { vehicleId: string }) {
           <input
             type="number"
             step="0.01"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="field-input w-full"
             {...register('litersAdded', { required: true, valueAsNumber: true, min: 0.01 })}
           />
           {errors.litersAdded && <p className="mt-1 text-xs text-red-600">Requerido</p>}
@@ -125,7 +125,7 @@ export function FuelSection({ vehicleId }: { vehicleId: string }) {
           <input
             type="number"
             step="0.01"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="field-input w-full"
             {...register('cost', { valueAsNumber: true })}
           />
         </div>
@@ -133,7 +133,7 @@ export function FuelSection({ vehicleId }: { vehicleId: string }) {
           <label className="mb-1 block text-xs font-medium text-gray-600">Odómetro</label>
           <input
             type="number"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="field-input w-full"
             {...register('odometerAtFill', { required: true, valueAsNumber: true, min: 0 })}
           />
           {errors.odometerAtFill && <p className="mt-1 text-xs text-red-600">Requerido</p>}
@@ -142,7 +142,7 @@ export function FuelSection({ vehicleId }: { vehicleId: string }) {
           <button
             type="submit"
             disabled={createMutation.isPending}
-            className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
+            className="btn-primary w-full"
           >
             {createMutation.isPending ? 'Guardando...' : 'Registrar'}
           </button>

@@ -29,7 +29,7 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className="flex min-h-screen items-center justify-center bg-gray-100 p-6">
-          <div className="w-full max-w-md rounded-lg bg-white p-8 text-center shadow">
+          <div className="w-full max-w-md rounded-xl bg-white p-8 text-center shadow-lg">
             <h1 className="mb-2 text-xl font-semibold text-gray-800">Algo salió mal</h1>
             <p className="mb-4 text-sm text-gray-500">
               Ocurrió un error inesperado en la aplicación. Intenta recargar la página.
@@ -40,7 +40,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <button
               type="button"
               onClick={this.handleReload}
-              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              className="btn-primary"
             >
               Volver al inicio
             </button>

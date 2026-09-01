@@ -73,7 +73,7 @@ export function MaintenanceSection({ vehicleId }: { vehicleId: string }) {
   });
 
   const markDoneMutation = useMutation({
-    mutationFn: async (id: string) => {
+    mutationFn: async (id: number) => {
       const { data } = await api.patch<MaintenanceSchedule>(`/maintenance-schedules/${id}`, { status: 'DONE' });
       return data;
     },
@@ -134,7 +134,7 @@ export function MaintenanceSection({ vehicleId }: { vehicleId: string }) {
                         <button
                           type="button"
                           onClick={() => markDoneMutation.mutate(s.id)}
-                          className="text-blue-600 hover:underline"
+                          className="link-action"
                         >
                           Marcar como realizado
                         </button>
@@ -156,19 +156,19 @@ export function MaintenanceSection({ vehicleId }: { vehicleId: string }) {
             <div>
               <label className="mb-1 block text-xs font-medium text-gray-600">Tipo</label>
               <input
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className="field-input w-full"
                 {...scheduleForm.register('type', { required: true })}
               />
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-gray-600">Fecha límite</label>
-              <input type="date" className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" {...scheduleForm.register('dueDate')} />
+              <input type="date" className="field-input w-full" {...scheduleForm.register('dueDate')} />
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-gray-600">Odómetro límite</label>
               <input
                 type="number"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className="field-input w-full"
                 {...scheduleForm.register('dueOdometerKm', { valueAsNumber: true })}
               />
             </div>
@@ -176,14 +176,14 @@ export function MaintenanceSection({ vehicleId }: { vehicleId: string }) {
               <button
                 type="submit"
                 disabled={createScheduleMutation.isPending}
-                className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
+                className="btn-primary w-full"
               >
                 Programar
               </button>
             </div>
             <div className="sm:col-span-4">
               <label className="mb-1 block text-xs font-medium text-gray-600">Descripción (opcional)</label>
-              <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" {...scheduleForm.register('description')} />
+              <input className="field-input w-full" {...scheduleForm.register('description')} />
             </div>
           </form>
           {scheduleError && <p className="mt-2 text-sm text-red-600">{scheduleError}</p>}
@@ -228,7 +228,7 @@ export function MaintenanceSection({ vehicleId }: { vehicleId: string }) {
             <div>
               <label className="mb-1 block text-xs font-medium text-gray-600">Tipo</label>
               <input
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className="field-input w-full"
                 {...recordForm.register('type', { required: true })}
               />
             </div>
@@ -237,7 +237,7 @@ export function MaintenanceSection({ vehicleId }: { vehicleId: string }) {
               <input
                 type="number"
                 step="0.01"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className="field-input w-full"
                 {...recordForm.register('cost', { valueAsNumber: true })}
               />
             </div>
@@ -245,7 +245,7 @@ export function MaintenanceSection({ vehicleId }: { vehicleId: string }) {
               <label className="mb-1 block text-xs font-medium text-gray-600">Odómetro</label>
               <input
                 type="number"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className="field-input w-full"
                 {...recordForm.register('odometerKm', { required: true, valueAsNumber: true })}
               />
             </div>
@@ -253,14 +253,14 @@ export function MaintenanceSection({ vehicleId }: { vehicleId: string }) {
               <button
                 type="submit"
                 disabled={createRecordMutation.isPending}
-                className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
+                className="btn-primary w-full"
               >
                 Registrar
               </button>
             </div>
             <div className="sm:col-span-4">
               <label className="mb-1 block text-xs font-medium text-gray-600">Descripción (opcional)</label>
-              <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" {...recordForm.register('description')} />
+              <input className="field-input w-full" {...recordForm.register('description')} />
             </div>
           </form>
           {recordError && <p className="mt-2 text-sm text-red-600">{recordError}</p>}

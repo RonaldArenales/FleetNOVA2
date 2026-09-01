@@ -14,7 +14,7 @@ const router = Router();
 router.use(requireDeviceKey);
 
 const gpsSchema = z.object({
-  vehicleId: z.string().min(1),
+  vehicleId: z.coerce.number().int(),
   lat: z.number(),
   lng: z.number(),
   speedKph: z.number(),
@@ -22,7 +22,7 @@ const gpsSchema = z.object({
 });
 
 const obdSchema = z.object({
-  vehicleId: z.string().min(1),
+  vehicleId: z.coerce.number().int(),
   rpm: z.number().int(),
   engineTempC: z.number(),
   batteryVoltage: z.number(),
@@ -111,13 +111,13 @@ router.post(
     if (engineTempC > 105) {
       alertsToCreate.push({
         level: AlertLevel.CRITICAL,
-        message: `Temperatura del motor elevada: ${engineTempC}°C`,
+        message: `Temperatura del motor elevada: ${engineTempC.toFixed(1)}°C`,
       });
     }
     if (batteryVoltage < 11.5) {
       alertsToCreate.push({
         level: AlertLevel.WARNING,
-        message: `Voltaje de bateria bajo: ${batteryVoltage}V`,
+        message: `Voltaje de bateria bajo: ${batteryVoltage.toFixed(1)}V`,
       });
     }
 

@@ -5,10 +5,10 @@ const AUTH_STORAGE_KEY = 'fleetnova.auth';
 export interface StoredAuth {
   token: string;
   user: {
-    id: string;
+    id: number;
     name: string;
     email: string;
-    role: 'ADMIN' | 'OPERATOR' | 'VIEWER';
+    role: 'ADMIN' | 'OPERATOR' | 'VIEWER' | 'DRIVER';
   };
 }
 

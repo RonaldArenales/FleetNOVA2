@@ -40,7 +40,7 @@ export function Alerts() {
   });
 
   const markReadMutation = useMutation({
-    mutationFn: async (id: string) => {
+    mutationFn: async (id: number) => {
       await api.patch(`/alerts/${id}/read`);
     },
     onSuccess: () => {
@@ -53,16 +53,27 @@ export function Alerts() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-800">Alertas</h1>
-        <p className="text-sm text-gray-500">Notificaciones generadas por la flota</p>
+      <div className="flex items-center gap-3">
+        <div className="icon-badge">
+          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
+            />
+          </svg>
+        </div>
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Alertas</h1>
+          <p className="text-sm text-gray-500">Notificaciones generadas por la flota</p>
+        </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="card flex flex-wrap items-center gap-3 p-4">
         <select
           value={vehicleId}
           onChange={(e) => setVehicleId(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="field-input"
         >
           <option value="">Todos los vehículos</option>
           {(vehiclesQuery.data ?? []).map((v) => (
@@ -77,7 +88,7 @@ export function Alerts() {
         </label>
       </div>
 
-      <div className="overflow-hidden rounded-lg bg-white shadow-sm">
+      <div className="card overflow-hidden">
         {alertsQuery.isLoading && <LoadingState label="Cargando alertas..." />}
         {alertsQuery.isError && (
           <div className="p-4">
@@ -104,7 +115,7 @@ export function Alerts() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {alertsQuery.data.map((alert) => (
-                <tr key={alert.id} className={alert.read ? '' : 'bg-blue-50/40'}>
+                <tr key={alert.id} className={alert.read ? '' : 'bg-indigo-50/50'}>
                   <td className="px-4 py-3">
                     <AlertLevelBadge level={alert.level} />
                   </td>
@@ -117,7 +128,7 @@ export function Alerts() {
                       <button
                         type="button"
                         onClick={() => markReadMutation.mutate(alert.id)}
-                        className="text-blue-600 hover:underline"
+                        className="link-action"
                       >
                         Marcar como leída
                       </button>

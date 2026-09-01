@@ -22,14 +22,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
+    let data: LoginResponse;
     try {
-      const { data } = await api.post<LoginResponse>('/auth/login', { email, password });
-      const stored: StoredAuth = { token: data.token, user: data.user };
-      setStoredAuth(stored);
-      setAuth(stored);
+      const response = await api.post<LoginResponse>('/auth/login', { email, password });
+      data = response.data;
     } catch (error) {
       throw new Error(getApiErrorMessage(error, 'No se pudo iniciar sesión. Verifica tus credenciales.'));
     }
+
+    // El actor Conductor solo existe para la app móvil; la plataforma web
+    // es exclusiva de ADMIN/OPERATOR/VIEWER. Se rechaza aqui, antes de
+    // guardar ninguna sesion, para no dejar nunca a un DRIVER autenticado
+    // en el contexto de la web.
+    if (data.user.role === 'DRIVER') {
+      throw new Error('Esta cuenta es de conductor. La plataforma web es solo para personal administrativo — usa la app móvil.');
+    }
+
+    const stored: StoredAuth = { token: data.token, user: data.user };
+    setStoredAuth(stored);
+    setAuth(stored);
   }, []);
 
   const logout = useCallback(() => {

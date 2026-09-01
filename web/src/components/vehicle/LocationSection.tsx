@@ -26,7 +26,7 @@ export function LocationSection({ gps, plate }: { gps: GpsPoint | null; plate: s
               <span className="font-medium text-gray-800">Longitud:</span> {gps.lng.toFixed(5)}
             </span>
             <span>
-              <span className="font-medium text-gray-800">Velocidad:</span> {gps.speedKph} km/h
+              <span className="font-medium text-gray-800">Velocidad:</span> {gps.speedKph.toFixed(2)} km/h
             </span>
             <span>
               <span className="font-medium text-gray-800">Última actualización:</span> {formatDateTime(gps.timestamp)}

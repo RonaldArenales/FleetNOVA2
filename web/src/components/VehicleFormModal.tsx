@@ -70,14 +70,14 @@ export function VehicleFormModal({
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">Placa</label>
             <input
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="field-input w-full"
               {...register('plate', { required: 'La placa es obligatoria' })}
             />
             {errors.plate && <p className="mt-1 text-xs text-red-600">{errors.plate.message}</p>}
           </div>
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">Estado</label>
-            <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" {...register('status')}>
+            <select className="field-input w-full" {...register('status')}>
               <option value="ACTIVE">Activo</option>
               <option value="MAINTENANCE">En mantenimiento</option>
               <option value="INACTIVE">Inactivo</option>
@@ -89,7 +89,7 @@ export function VehicleFormModal({
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">Marca</label>
             <input
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="field-input w-full"
               {...register('brand', { required: 'La marca es obligatoria' })}
             />
             {errors.brand && <p className="mt-1 text-xs text-red-600">{errors.brand.message}</p>}
@@ -97,7 +97,7 @@ export function VehicleFormModal({
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">Modelo</label>
             <input
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="field-input w-full"
               {...register('model', { required: 'El modelo es obligatorio' })}
             />
             {errors.model && <p className="mt-1 text-xs text-red-600">{errors.model.message}</p>}
@@ -109,14 +109,14 @@ export function VehicleFormModal({
             <label className="mb-1 block text-sm font-medium text-gray-700">Año</label>
             <input
               type="number"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="field-input w-full"
               {...register('year', { required: 'El año es obligatorio', valueAsNumber: true })}
             />
             {errors.year && <p className="mt-1 text-xs text-red-600">{errors.year.message}</p>}
           </div>
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">VIN (opcional)</label>
-            <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" {...register('vin')} />
+            <input className="field-input w-full" {...register('vin')} />
           </div>
         </div>
 
@@ -125,7 +125,7 @@ export function VehicleFormModal({
             <label className="mb-1 block text-sm font-medium text-gray-700">Odómetro (km)</label>
             <input
               type="number"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="field-input w-full"
               {...register('odometerKm', { valueAsNumber: true })}
             />
           </div>
@@ -133,7 +133,7 @@ export function VehicleFormModal({
             <label className="mb-1 block text-sm font-medium text-gray-700">Km llanta instalada</label>
             <input
               type="number"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="field-input w-full"
               {...register('tireInstalledKm', { valueAsNumber: true })}
             />
           </div>
@@ -141,7 +141,7 @@ export function VehicleFormModal({
             <label className="mb-1 block text-sm font-medium text-gray-700">Vida útil llanta (km)</label>
             <input
               type="number"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="field-input w-full"
               {...register('tireLifeKm', { valueAsNumber: true })}
             />
           </div>
@@ -153,14 +153,14 @@ export function VehicleFormModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+            className="btn-secondary"
           >
             Cancelar
           </button>
           <button
             type="submit"
             disabled={submitting}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
+            className="btn-primary"
           >
             {submitting ? 'Guardando...' : 'Guardar'}
           </button>

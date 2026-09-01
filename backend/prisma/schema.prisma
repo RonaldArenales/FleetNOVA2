@@ -3,14 +3,16 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum Role {
   ADMIN
   OPERATOR
   VIEWER
+  DRIVER
 }
 
 enum VehicleStatus {
@@ -32,18 +34,27 @@ enum AlertLevel {
   CRITICAL
 }
 
+// Patron de ids: cada tabla es un entero autoincremental que arranca en un
+// bloque propio de 6 digitos (ver migracion 20260901_short_ids), asi con
+// solo mirar el numero se sabe de que tabla es sin tener que consultarlo:
+//   Driver 100000+  User 200000+  Vehicle 300000+  VehicleDriver 400000+
+//   MaintenanceSchedule 500000+  MaintenanceRecord 600000+  FuelLog 700000+
+//   Alert 800000+  GpsReading 900000+  ObdReading 1000000+
 model User {
-  id           String   @id @default(uuid())
+  id           Int      @id @default(autoincrement())
   name         String
   email        String   @unique
   passwordHash String
   role         Role     @default(VIEWER)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  driverId     Int?     @unique
+  driver       Driver?  @relation(fields: [driverId], references: [id])
 }
 
 model Vehicle {
-  id                   String   @id @default(uuid())
+  id                   Int      @id @default(autoincrement())
   plate                String   @unique
   brand                String
   model                String
@@ -66,7 +77,7 @@ model Vehicle {
 }
 
 model Driver {
-  id            String   @id @default(uuid())
+  id            Int      @id @default(autoincrement())
   name          String
   documentId    String   @unique
   licenseNumber String
@@ -74,12 +85,13 @@ model Driver {
   createdAt     DateTime @default(now())
 
   vehicles      VehicleDriver[]
+  account       User?
 }
 
 model VehicleDriver {
-  id         String   @id @default(uuid())
-  vehicleId  String
-  driverId   String
+  id         Int      @id @default(autoincrement())
+  vehicleId  Int
+  driverId   Int
   assignedAt DateTime @default(now())
   active     Boolean  @default(true)
 
@@ -91,8 +103,8 @@ model VehicleDriver {
 }
 
 model GpsReading {
-  id        String   @id @default(uuid())
-  vehicleId String
+  id        Int      @id @default(autoincrement())
+  vehicleId Int
   lat       Float
   lng       Float
   speedKph  Float
@@ -104,8 +116,8 @@ model GpsReading {
 }
 
 model ObdReading {
-  id             String   @id @default(uuid())
-  vehicleId      String
+  id             Int      @id @default(autoincrement())
+  vehicleId      Int
   rpm            Int
   engineTempC    Float
   batteryVoltage Float
@@ -121,8 +133,8 @@ model ObdReading {
 }
 
 model FuelLog {
-  id             String   @id @default(uuid())
-  vehicleId      String
+  id             Int      @id @default(autoincrement())
+  vehicleId      Int
   litersAdded    Float
   cost           Float?
   odometerAtFill Float
@@ -134,8 +146,8 @@ model FuelLog {
 }
 
 model MaintenanceSchedule {
-  id            String   @id @default(uuid())
-  vehicleId     String
+  id            Int      @id @default(autoincrement())
+  vehicleId     Int
   type          String
   dueDate       DateTime?
   dueOdometerKm Float?
@@ -149,8 +161,8 @@ model MaintenanceSchedule {
 }
 
 model MaintenanceRecord {
-  id          String   @id @default(uuid())
-  vehicleId   String
+  id          Int      @id @default(autoincrement())
+  vehicleId   Int
   type        String
   description String?
   cost        Float?
@@ -163,8 +175,8 @@ model MaintenanceRecord {
 }
 
 model Alert {
-  id        String     @id @default(uuid())
-  vehicleId String
+  id        Int        @id @default(autoincrement())
+  vehicleId Int
   level     AlertLevel @default(INFO)
   message   String
   read      Boolean    @default(false)
