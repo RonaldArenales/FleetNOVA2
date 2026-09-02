@@ -29,7 +29,7 @@ services:
     name: fleetnova2-app
     runtime: static
     rootDir: web
-    buildCommand: rm -rf node_modules package-lock.json && npm install && npm run build
+    buildCommand: npm install -g npm@latest && npm cache clean --force && rm -rf node_modules package-lock.json && npm install && npm run build
     staticPublishPath: dist
     envVars:
       - key: NODE_VERSION
@@ -49,7 +49,7 @@ services:
     name: fleetnova2-conductor
     runtime: static
     rootDir: mobile
-    buildCommand: rm -rf node_modules package-lock.json && npm install && npm run build
+    buildCommand: npm install -g npm@latest && npm cache clean --force && rm -rf node_modules package-lock.json && npm install && npm run build
     staticPublishPath: dist
     envVars:
       - key: NODE_VERSION
