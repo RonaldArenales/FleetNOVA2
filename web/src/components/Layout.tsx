@@ -8,7 +8,11 @@ const navItems = [
   { to: '/conductores', label: 'Conductores' },
   { to: '/alertas', label: 'Alertas' },
   { to: '/reportes', label: 'Reportes' },
-  { to: '/usuarios', label: 'Usuarios' },
+  // Datos de contacto de terceros (solicitudes) y gestion de cuentas
+  // (usuarios): visibles solo para ADMIN, ver tambien accessRequests.routes.ts
+  // y users.routes.ts en el backend, que ya exigen ese rol.
+  { to: '/solicitudes', label: 'Solicitudes', adminOnly: true },
+  { to: '/usuarios', label: 'Usuarios', adminOnly: true },
 ];
 
 const roleLabels: Record<string, string> = {
@@ -48,7 +52,9 @@ export function Layout() {
           </div>
         </div>
         <nav className="mt-3 flex flex-1 flex-col gap-1 px-3">
-          {navItems.map((item) => (
+          {navItems
+            .filter((item) => !item.adminOnly || user?.role === 'ADMIN')
+            .map((item) => (
             <NavLink
               key={item.to}
               to={item.to}

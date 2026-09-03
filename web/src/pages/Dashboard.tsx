@@ -54,6 +54,18 @@ function IconFuel() {
   );
 }
 
+function IconInbox() {
+  return (
+    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM3 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 019.374 21c-2.331 0-4.512-.645-6.374-1.766z"
+      />
+    </svg>
+  );
+}
+
 const statAccents = {
   indigo: 'border-indigo-100 bg-indigo-50 text-indigo-600',
   green: 'border-emerald-100 bg-emerald-50 text-emerald-600',
@@ -124,7 +136,7 @@ export function Dashboard() {
       {summaryQuery.isLoading && <LoadingState label="Cargando resumen..." />}
       {summaryQuery.isError && <ErrorState error={summaryQuery.error} retry={() => summaryQuery.refetch()} />}
       {summaryQuery.data && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <StatCard label="Vehículos activos" value={summaryQuery.data.activeVehicles} icon={<IconTruck />} accent="indigo" />
           <StatCard label="Total de vehículos" value={summaryQuery.data.totalVehicles} icon={<IconGrid />} accent="cyan" />
           <StatCard label="Alertas sin leer" value={summaryQuery.data.unreadAlerts} icon={<IconBell />} accent="red" />
@@ -138,6 +150,12 @@ export function Dashboard() {
             }
             icon={<IconFuel />}
             accent="green"
+          />
+          <StatCard
+            label="Solicitudes de acceso pendientes"
+            value={summaryQuery.data.pendingAccessRequests}
+            icon={<IconInbox />}
+            accent="indigo"
           />
         </div>
       )}

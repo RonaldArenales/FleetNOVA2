@@ -7,6 +7,7 @@ import { asyncHandler } from "../../utils/asyncHandler";
 import { requireAuth, requireRole, requireStaff } from "../../middleware/auth";
 import { badRequest, notFound } from "../../utils/httpError";
 import { computeTrips } from "../../utils/trips";
+import { getVehicleScope, inScope } from "../../utils/vehicleScope";
 
 const router = Router();
 
@@ -18,6 +19,16 @@ function parseVehicleId(raw: string): number {
   const id = Number(raw);
   if (!Number.isInteger(id)) throw badRequest("Identificador de vehiculo invalido");
   return id;
+}
+
+// Busca el vehiculo y verifica que el usuario actual tenga permiso de verlo
+// (ver vehicleScope.ts). Fuera de alcance se trata igual que inexistente,
+// para no revelar que el vehiculo existe.
+async function getVehicleInScope(id: number, req: import("express").Request) {
+  const vehicle = await prisma.vehicle.findUnique({ where: { id } });
+  const scope = await getVehicleScope(req.user!);
+  if (!vehicle || !inScope(vehicle.ownerId, scope)) throw notFound("Vehiculo no encontrado");
+  return vehicle;
 }
 
 const vehicleCreateSchema = z.object({
@@ -56,8 +67,12 @@ router.get(
       where.status = status as VehicleStatus;
     }
 
+    const scope = await getVehicleScope(req.user!);
+    if (scope) where.ownerId = scope.ownerId;
+
     const vehicles = await prisma.vehicle.findMany({
       where,
+      include: { owner: { select: { id: true, name: true } } },
       orderBy: { createdAt: "asc" },
     });
     res.json(vehicles);
@@ -69,8 +84,11 @@ router.get(
   "/:id",
   asyncHandler(async (req, res) => {
     const id = parseVehicleId(req.params.id);
-    const vehicle = await prisma.vehicle.findUnique({ where: { id } });
-    if (!vehicle) throw notFound("Vehiculo no encontrado");
+    await getVehicleInScope(id, req);
+    const vehicle = await prisma.vehicle.findUnique({
+      where: { id },
+      include: { owner: { select: { id: true, name: true } } },
+    });
     res.json(vehicle);
   })
 );
@@ -81,7 +99,9 @@ router.post(
   requireRole("ADMIN", "OPERATOR"),
   validateBody(vehicleCreateSchema),
   asyncHandler(async (req, res) => {
-    const vehicle = await prisma.vehicle.create({ data: req.body });
+    const vehicle = await prisma.vehicle.create({
+      data: { ...req.body, ownerId: req.user!.id },
+    });
     res.status(201).json(vehicle);
   })
 );
@@ -93,8 +113,7 @@ router.patch(
   validateBody(vehicleUpdateSchema),
   asyncHandler(async (req, res) => {
     const id = parseVehicleId(req.params.id);
-    const existing = await prisma.vehicle.findUnique({ where: { id } });
-    if (!existing) throw notFound("Vehiculo no encontrado");
+    await getVehicleInScope(id, req);
 
     const vehicle = await prisma.vehicle.update({
       where: { id },
@@ -110,8 +129,37 @@ router.delete(
   requireRole("ADMIN", "OPERATOR"),
   asyncHandler(async (req, res) => {
     const id = parseVehicleId(req.params.id);
-    const existing = await prisma.vehicle.findUnique({ where: { id } });
-    if (!existing) throw notFound("Vehiculo no encontrado");
+    await getVehicleInScope(id, req);
+
+    // El vehiculo tiene historial (telemetria, combustible, mantenimiento,
+    // alertas) referenciado con ON DELETE RESTRICT: borrarlo directamente
+    // rompe con un error de base de datos. Se bloquea con un mensaje claro
+    // en vez de dejar que la restriccion de la BD explote como 500.
+    const counts = await prisma.vehicle.findUnique({
+      where: { id },
+      select: {
+        _count: {
+          select: {
+            gpsReadings: true,
+            obdReadings: true,
+            fuelLogs: true,
+            maintenanceSchedules: true,
+            maintenanceRecords: true,
+            alerts: true,
+            drivers: true,
+          },
+        },
+      },
+    });
+    const hasHistory = counts
+      ? Object.values(counts._count).some((n) => n > 0)
+      : false;
+    if (hasHistory) {
+      throw badRequest(
+        "No se puede eliminar: este vehiculo tiene historial (telemetria, combustible, mantenimiento o alertas). Cambia su estado a Inactivo en vez de eliminarlo."
+      );
+    }
+
     await prisma.vehicle.delete({ where: { id } });
     res.status(204).send();
   })
@@ -122,8 +170,7 @@ router.get(
   "/:id/status",
   asyncHandler(async (req, res) => {
     const id = parseVehicleId(req.params.id);
-    const vehicle = await prisma.vehicle.findUnique({ where: { id } });
-    if (!vehicle) throw notFound("Vehiculo no encontrado");
+    await getVehicleInScope(id, req);
 
     const [gps, obd] = await Promise.all([
       prisma.gpsReading.findFirst({ where: { vehicleId: id }, orderBy: { timestamp: "desc" } }),
@@ -139,8 +186,7 @@ router.get(
   "/:id/tire-wear",
   asyncHandler(async (req, res) => {
     const id = parseVehicleId(req.params.id);
-    const vehicle = await prisma.vehicle.findUnique({ where: { id } });
-    if (!vehicle) throw notFound("Vehiculo no encontrado");
+    const vehicle = await getVehicleInScope(id, req);
 
     const kmSinceInstalled = Math.max(0, vehicle.odometerKm - vehicle.tireInstalledKm);
     const rawPercent = vehicle.tireLifeKm > 0 ? (kmSinceInstalled / vehicle.tireLifeKm) * 100 : 0;
@@ -165,8 +211,7 @@ router.get(
     const to = req.query.to as string | undefined;
     const limit = req.query.limit as string | undefined;
 
-    const vehicle = await prisma.vehicle.findUnique({ where: { id } });
-    if (!vehicle) throw notFound("Vehiculo no encontrado");
+    await getVehicleInScope(id, req);
 
     const where: Prisma.GpsReadingWhereInput = { vehicleId: id };
     const timestamp: Prisma.DateTimeFilter = {};
@@ -191,8 +236,7 @@ router.get(
   "/:id/trips",
   asyncHandler(async (req, res) => {
     const id = parseVehicleId(req.params.id);
-    const vehicle = await prisma.vehicle.findUnique({ where: { id } });
-    if (!vehicle) throw notFound("Vehiculo no encontrado");
+    await getVehicleInScope(id, req);
 
     const readings = await prisma.gpsReading.findMany({
       where: { vehicleId: id },
@@ -216,12 +260,12 @@ router.post(
     const id = parseVehicleId(req.params.id);
     const { driverId } = req.body as z.infer<typeof assignDriverSchema>;
 
-    const [vehicle, driver] = await Promise.all([
-      prisma.vehicle.findUnique({ where: { id } }),
+    const [, driver, scope] = await Promise.all([
+      getVehicleInScope(id, req),
       prisma.driver.findUnique({ where: { id: driverId } }),
+      getVehicleScope(req.user!),
     ]);
-    if (!vehicle) throw notFound("Vehiculo no encontrado");
-    if (!driver) throw notFound("Conductor no encontrado");
+    if (!driver || !inScope(driver.ownerId, scope)) throw notFound("Conductor no encontrado");
 
     await prisma.vehicleDriver.updateMany({
       where: { vehicleId: id, active: true },

@@ -30,7 +30,12 @@ export const errorHandler = (
     return res.status(400).json({ error: "Error en la solicitud a la base de datos" });
   }
 
+  // Cualquier error no controlado (incluyendo errores crudos de Postgres,
+  // como violaciones de constraint no capturadas antes) se registra en el
+  // servidor pero nunca se expone al cliente: el mensaje puede incluir
+  // rutas de archivo o detalles internos de la base de datos.
   console.error(err);
-  const message = err instanceof Error ? err.message : "Error interno del servidor";
-  res.status(500).json({ error: message || "Error interno del servidor" });
+  const isProd = process.env.NODE_ENV === "production";
+  const message = !isProd && err instanceof Error ? err.message : "Error interno del servidor";
+  res.status(500).json({ error: message });
 };

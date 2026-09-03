@@ -21,6 +21,7 @@ export function Vehicles() {
   const queryClient = useQueryClient();
 
   const canWrite = user?.role === 'ADMIN' || user?.role === 'OPERATOR';
+  const isAdmin = user?.role === 'ADMIN';
 
   const [plateInput, setPlateInput] = useState('');
   const [plate, setPlate] = useState('');
@@ -146,6 +147,7 @@ export function Vehicles() {
                 <th className="px-4 py-3">Año</th>
                 <th className="px-4 py-3">Estado</th>
                 <th className="px-4 py-3">Odómetro</th>
+                {isAdmin && <th className="px-4 py-3">Propietario</th>}
                 {canWrite && <th className="px-4 py-3 text-right">Acciones</th>}
               </tr>
             </thead>
@@ -165,6 +167,7 @@ export function Vehicles() {
                     <VehicleStatusBadge status={v.status} />
                   </td>
                   <td className="px-4 py-3 text-gray-600">{v.odometerKm.toLocaleString('es')} km</td>
+                  {isAdmin && <td className="px-4 py-3 text-gray-600">{v.owner?.name ?? '—'}</td>}
                   {canWrite && (
                     <td className="px-4 py-3 text-right">
                       <button

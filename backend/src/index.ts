@@ -14,6 +14,7 @@ import alertsRoutes from "./modules/alerts/alerts.routes";
 import dashboardRoutes from "./modules/dashboard/dashboard.routes";
 import reportsRoutes from "./modules/reports/reports.routes";
 import publicRoutes from "./modules/public/public.routes";
+import accessRequestsRoutes from "./modules/accessRequests/accessRequests.routes";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
 
 const app = express();
@@ -51,6 +52,7 @@ app.use("/api/telemetry", telemetryRoutes);
 app.use("/api/alerts", alertsRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/reports", reportsRoutes);
+app.use("/api/access-requests", accessRequestsRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

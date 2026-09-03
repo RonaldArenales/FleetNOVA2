@@ -9,6 +9,7 @@ import { Drivers } from './pages/Drivers';
 import { Alerts } from './pages/Alerts';
 import { Reports } from './pages/Reports';
 import { Users } from './pages/Users';
+import { AccessRequests } from './pages/AccessRequests';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/alertas" element={<Alerts />} />
         <Route path="/reportes" element={<Reports />} />
         <Route path="/usuarios" element={<Users />} />
+        <Route path="/solicitudes" element={<AccessRequests />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

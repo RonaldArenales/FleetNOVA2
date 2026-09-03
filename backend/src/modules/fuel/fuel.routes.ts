@@ -5,6 +5,7 @@ import { validateBody } from "../../utils/validate";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { requireAuth, requireStaff } from "../../middleware/auth";
 import { badRequest, notFound } from "../../utils/httpError";
+import { getVehicleScope, inScope } from "../../utils/vehicleScope";
 
 // Mounted at /api/vehicles/:id/fuel-... in index.ts (mergeParams needed).
 const router = Router({ mergeParams: true });
@@ -15,6 +16,12 @@ function parseVehicleId(raw: string): number {
   const id = Number(raw);
   if (!Number.isInteger(id)) throw badRequest("Identificador de vehiculo invalido");
   return id;
+}
+
+async function assertVehicleInScope(id: number, req: import("express").Request) {
+  const vehicle = await prisma.vehicle.findUnique({ where: { id } });
+  const scope = await getVehicleScope(req.user!);
+  if (!vehicle || !inScope(vehicle.ownerId, scope)) throw notFound("Vehiculo no encontrado");
 }
 
 const fuelLogSchema = z.object({
@@ -28,8 +35,7 @@ router.get(
   "/fuel-logs",
   asyncHandler(async (req, res) => {
     const id = parseVehicleId(req.params.id);
-    const vehicle = await prisma.vehicle.findUnique({ where: { id } });
-    if (!vehicle) throw notFound("Vehiculo no encontrado");
+    await assertVehicleInScope(id, req);
 
     const logs = await prisma.fuelLog.findMany({
       where: { vehicleId: id },
@@ -45,8 +51,7 @@ router.post(
   validateBody(fuelLogSchema),
   asyncHandler(async (req, res) => {
     const id = parseVehicleId(req.params.id);
-    const vehicle = await prisma.vehicle.findUnique({ where: { id } });
-    if (!vehicle) throw notFound("Vehiculo no encontrado");
+    await assertVehicleInScope(id, req);
 
     const { litersAdded, cost, odometerAtFill } = req.body as z.infer<typeof fuelLogSchema>;
     const log = await prisma.fuelLog.create({
@@ -61,8 +66,7 @@ router.get(
   "/fuel-consumption",
   asyncHandler(async (req, res) => {
     const id = parseVehicleId(req.params.id);
-    const vehicle = await prisma.vehicle.findUnique({ where: { id } });
-    if (!vehicle) throw notFound("Vehiculo no encontrado");
+    await assertVehicleInScope(id, req);
 
     const logs = await prisma.fuelLog.findMany({
       where: { vehicleId: id },

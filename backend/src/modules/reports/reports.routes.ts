@@ -4,6 +4,7 @@ import { prisma } from "../../lib/prisma";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { requireAuth, requireStaff } from "../../middleware/auth";
 import { computeTrips } from "../../utils/trips";
+import { getVehicleScope } from "../../utils/vehicleScope";
 
 const router = Router();
 
@@ -27,7 +28,10 @@ router.get(
 
     const dateFilter: Prisma.DateTimeFilter = { gte: fromDate, lte: toDate };
 
-    const vehicles = await prisma.vehicle.findMany();
+    const scope = await getVehicleScope(req.user!);
+    const vehicles = await prisma.vehicle.findMany({
+      where: scope ? { ownerId: scope.ownerId } : undefined,
+    });
 
     const report = await Promise.all(
       vehicles.map(async (vehicle) => {

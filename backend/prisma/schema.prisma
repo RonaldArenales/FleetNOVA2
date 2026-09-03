@@ -40,6 +40,7 @@ enum AlertLevel {
 //   Driver 100000+  User 200000+  Vehicle 300000+  VehicleDriver 400000+
 //   MaintenanceSchedule 500000+  MaintenanceRecord 600000+  FuelLog 700000+
 //   Alert 800000+  GpsReading 900000+  ObdReading 1000000+
+//   AccessRequest 1100000+
 model User {
   id           Int      @id @default(autoincrement())
   name         String
@@ -49,8 +50,21 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  // Cuenta de acceso (rol DRIVER) vinculada a esta ficha de conductor.
   driverId     Int?     @unique
-  driver       Driver?  @relation(fields: [driverId], references: [id])
+  driver       Driver?  @relation("DriverAccount", fields: [driverId], references: [id])
+
+  // Flota que este OPERATOR creo/posee (ver vehicleScope.ts). Los vehiculos
+  // de un ADMIN cuentan como suyos, pero ADMIN de todas formas ve todo.
+  ownedVehicles    Vehicle[] @relation("VehicleOwner")
+  // Conductores que este OPERATOR registro (mismo alcance que ownedVehicles).
+  ownedDrivers     Driver[]  @relation("DriverOwner")
+
+  // Solo aplica a rol VIEWER: el operador cuya flota puede observar.
+  // null = no ve ningun vehiculo hasta que un ADMIN lo asocie.
+  viewScopeOwnerId Int?
+  viewScopeOwner   User?  @relation("ViewScope", fields: [viewScopeOwnerId], references: [id])
+  viewers          User[] @relation("ViewScope")
 }
 
 model Vehicle {
@@ -67,6 +81,11 @@ model Vehicle {
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 
+  // Operador (o admin) que registro el vehiculo; define que OPERATOR/VIEWER
+  // puede verlo (ver backend/src/utils/vehicleScope.ts).
+  ownerId              Int
+  owner                User     @relation("VehicleOwner", fields: [ownerId], references: [id])
+
   drivers              VehicleDriver[]
   gpsReadings          GpsReading[]
   obdReadings          ObdReading[]
@@ -74,6 +93,8 @@ model Vehicle {
   maintenanceSchedules MaintenanceSchedule[]
   maintenanceRecords   MaintenanceRecord[]
   alerts               Alert[]
+
+  @@index([ownerId])
 }
 
 model Driver {
@@ -84,8 +105,15 @@ model Driver {
   phone         String?
   createdAt     DateTime @default(now())
 
+  // Operador (o admin) que registro al conductor; mismo alcance que
+  // Vehicle.ownerId (ver backend/src/utils/vehicleScope.ts).
+  ownerId       Int
+  owner         User     @relation("DriverOwner", fields: [ownerId], references: [id])
+
   vehicles      VehicleDriver[]
-  account       User?
+  account       User?    @relation("DriverAccount")
+
+  @@index([ownerId])
 }
 
 model VehicleDriver {
@@ -185,4 +213,17 @@ model Alert {
   vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
 
   @@index([vehicleId])
+}
+
+// Solicitudes de acceso enviadas desde el formulario publico de la pagina
+// principal (sin autenticacion). El panel admin las revisa y las marca
+// como atendidas.
+model AccessRequest {
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String
+  phone     String
+  email     String
+  reviewed  Boolean  @default(false)
+  createdAt DateTime @default(now())
 }

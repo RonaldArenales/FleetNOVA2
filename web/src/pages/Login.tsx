@@ -5,6 +5,7 @@ import { api, getApiErrorMessage, setStoredAuth } from '../lib/api';
 import type { LoginResponse } from '../types';
 import { RotatingBanner } from '../components/landing/RotatingBanner';
 import { LiveMapPreview } from '../components/landing/LiveMapPreview';
+import { AccessRequestForm } from '../components/landing/AccessRequestForm';
 
 interface LoginForm {
   email: string;
@@ -186,9 +187,17 @@ function NavBar() {
           ))}
         </nav>
 
-        <a href="#acceso" className="btn-primary">
-          Iniciar sesión
-        </a>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <a
+            href="#solicitar-acceso"
+            className="hidden items-center justify-center gap-1.5 rounded-lg border-2 border-indigo-600 px-3.5 py-[calc(0.5rem-2px)] text-sm font-semibold text-indigo-600 transition-colors hover:bg-indigo-50 sm:inline-flex"
+          >
+            Solicitar acceso
+          </a>
+          <a href="#acceso" className="btn-primary">
+            Iniciar sesión
+          </a>
+        </div>
       </div>
     </header>
   );
@@ -509,6 +518,23 @@ export function Login() {
                 </ul>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Solicitar acceso */}
+      <section id="solicitar-acceso" className="scroll-mt-16 bg-gray-50">
+        <div className="mx-auto max-w-6xl px-4 py-16 lg:px-8">
+          <div className="grid gap-10 lg:grid-cols-2 lg:items-start">
+            <div className="max-w-lg">
+              <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">Solicitar acceso</p>
+              <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-gray-900">¿Aún no tienes cuenta?</h2>
+              <p className="mt-3 text-gray-600">
+                Cuéntanos quién eres y nuestro equipo se pondrá en contacto para darte acceso a la plataforma,
+                ya sea como administrador o como conductor.
+              </p>
+            </div>
+            <AccessRequestForm />
           </div>
         </div>
       </section>

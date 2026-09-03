@@ -6,6 +6,7 @@ import { validateBody } from "../../utils/validate";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { requireAuth, requireRole, requireStaff } from "../../middleware/auth";
 import { badRequest, notFound } from "../../utils/httpError";
+import { getVehicleScope, inScope } from "../../utils/vehicleScope";
 
 // Mounted at /api/vehicles/:id in index.ts (mergeParams needed to read :id).
 export const vehicleMaintenanceRouter = Router({ mergeParams: true });
@@ -15,6 +16,12 @@ function parseId(raw: string, message: string): number {
   const id = Number(raw);
   if (!Number.isInteger(id)) throw badRequest(message);
   return id;
+}
+
+async function assertVehicleInScope(id: number, req: import("express").Request) {
+  const vehicle = await prisma.vehicle.findUnique({ where: { id } });
+  const scope = await getVehicleScope(req.user!);
+  if (!vehicle || !inScope(vehicle.ownerId, scope)) throw notFound("Vehiculo no encontrado");
 }
 
 const scheduleCreateSchema = z.object({
@@ -38,8 +45,7 @@ vehicleMaintenanceRouter.get(
   "/maintenance-schedules",
   asyncHandler(async (req, res) => {
     const id = parseId(req.params.id, 'Identificador de vehiculo invalido');
-    const vehicle = await prisma.vehicle.findUnique({ where: { id } });
-    if (!vehicle) throw notFound("Vehiculo no encontrado");
+    await assertVehicleInScope(id, req);
 
     const schedules = await prisma.maintenanceSchedule.findMany({
       where: { vehicleId: id },
@@ -56,8 +62,7 @@ vehicleMaintenanceRouter.post(
   validateBody(scheduleCreateSchema),
   asyncHandler(async (req, res) => {
     const id = parseId(req.params.id, 'Identificador de vehiculo invalido');
-    const vehicle = await prisma.vehicle.findUnique({ where: { id } });
-    if (!vehicle) throw notFound("Vehiculo no encontrado");
+    await assertVehicleInScope(id, req);
 
     const { type, dueDate, dueOdometerKm, description, status } = req.body as z.infer<
       typeof scheduleCreateSchema
@@ -81,8 +86,7 @@ vehicleMaintenanceRouter.get(
   "/maintenance-records",
   asyncHandler(async (req, res) => {
     const id = parseId(req.params.id, 'Identificador de vehiculo invalido');
-    const vehicle = await prisma.vehicle.findUnique({ where: { id } });
-    if (!vehicle) throw notFound("Vehiculo no encontrado");
+    await assertVehicleInScope(id, req);
 
     const records = await prisma.maintenanceRecord.findMany({
       where: { vehicleId: id },
@@ -99,8 +103,7 @@ vehicleMaintenanceRouter.post(
   validateBody(recordCreateSchema),
   asyncHandler(async (req, res) => {
     const id = parseId(req.params.id, 'Identificador de vehiculo invalido');
-    const vehicle = await prisma.vehicle.findUnique({ where: { id } });
-    if (!vehicle) throw notFound("Vehiculo no encontrado");
+    await assertVehicleInScope(id, req);
 
     const { type, description, cost, odometerKm, performedAt } = req.body as z.infer<
       typeof recordCreateSchema
@@ -142,6 +145,7 @@ maintenanceSchedulesRouter.patch(
     const id = parseId(req.params.id, 'Identificador de programacion de mantenimiento invalido');
     const existing = await prisma.maintenanceSchedule.findUnique({ where: { id } });
     if (!existing) throw notFound("Programacion de mantenimiento no encontrada");
+    await assertVehicleInScope(existing.vehicleId, req);
 
     const { dueDate, ...rest } = req.body as z.infer<typeof scheduleUpdateSchema>;
 

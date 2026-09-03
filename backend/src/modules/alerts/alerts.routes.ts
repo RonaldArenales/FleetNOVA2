@@ -4,6 +4,7 @@ import { prisma } from "../../lib/prisma";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { requireAuth, requireStaff } from "../../middleware/auth";
 import { badRequest, notFound } from "../../utils/httpError";
+import { getVehicleScope, inScope } from "../../utils/vehicleScope";
 
 const router = Router();
 
@@ -20,6 +21,9 @@ router.get(
     if (vehicleId) where.vehicleId = Number(vehicleId);
     if (unread === "true") where.read = false;
 
+    const scope = await getVehicleScope(req.user!);
+    if (scope) where.vehicle = { ownerId: scope.ownerId };
+
     const alerts = await prisma.alert.findMany({
       where,
       orderBy: { createdAt: "desc" },
@@ -35,8 +39,9 @@ router.patch(
     const id = Number(req.params.id);
     if (!Number.isInteger(id)) throw badRequest("Identificador de alerta invalido");
 
-    const existing = await prisma.alert.findUnique({ where: { id } });
-    if (!existing) throw notFound("Alerta no encontrada");
+    const existing = await prisma.alert.findUnique({ where: { id }, include: { vehicle: true } });
+    const scope = await getVehicleScope(req.user!);
+    if (!existing || !inScope(existing.vehicle.ownerId, scope)) throw notFound("Alerta no encontrada");
 
     const alert = await prisma.alert.update({ where: { id }, data: { read: true } });
     res.json(alert);

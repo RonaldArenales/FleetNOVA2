@@ -3,6 +3,7 @@ import { VehicleStatus, MaintenanceStatus } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { requireAuth, requireStaff } from "../../middleware/auth";
+import { getVehicleScope } from "../../utils/vehicleScope";
 
 const router = Router();
 
@@ -11,20 +12,23 @@ router.use(requireAuth, requireStaff);
 // GET /api/dashboard/summary
 router.get(
   "/summary",
-  asyncHandler(async (_req, res) => {
+  asyncHandler(async (req, res) => {
     const now = new Date();
     const in7Days = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const scope = await getVehicleScope(req.user!);
+    const vehicleWhere = scope ? { ownerId: scope.ownerId } : undefined;
 
-    const [totalVehicles, activeVehicles, unreadAlerts, scheduledMaintenances, vehicles] =
+    const [totalVehicles, activeVehicles, unreadAlerts, scheduledMaintenances, vehicles, pendingAccessRequests] =
       await Promise.all([
-        prisma.vehicle.count(),
-        prisma.vehicle.count({ where: { status: VehicleStatus.ACTIVE } }),
-        prisma.alert.count({ where: { read: false } }),
+        prisma.vehicle.count({ where: vehicleWhere }),
+        prisma.vehicle.count({ where: { ...vehicleWhere, status: VehicleStatus.ACTIVE } }),
+        prisma.alert.count({ where: { read: false, vehicle: vehicleWhere } }),
         prisma.maintenanceSchedule.findMany({
-          where: { status: MaintenanceStatus.SCHEDULED },
+          where: { status: MaintenanceStatus.SCHEDULED, vehicle: vehicleWhere },
           include: { vehicle: true },
         }),
-        prisma.vehicle.findMany(),
+        prisma.vehicle.findMany({ where: vehicleWhere }),
+        scope ? Promise.resolve(0) : prisma.accessRequest.count({ where: { reviewed: false } }),
       ]);
 
     // Vencidos o por vencer: fecha limite dentro de 7 dias, o kilometraje
@@ -62,6 +66,7 @@ router.get(
       unreadAlerts,
       maintenancesDue,
       avgFuelConsumptionLper100km,
+      pendingAccessRequests,
     });
   })
 );

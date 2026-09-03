@@ -56,7 +56,12 @@ export function Users() {
   const updateMutation = useMutation({
     mutationFn: async (values: UserFormValues) => {
       if (!editing) throw new Error('Sin usuario seleccionado');
-      const payload: Partial<UserFormValues> = { name: values.name, email: values.email, role: values.role };
+      const payload: Partial<UserFormValues> = {
+        name: values.name,
+        email: values.email,
+        role: values.role,
+        viewScopeOwnerId: values.role === 'VIEWER' ? values.viewScopeOwnerId ?? null : null,
+      };
       if (values.password) payload.password = values.password;
       const { data } = await api.patch<User>(`/users/${editing.id}`, payload);
       return data;
@@ -176,6 +181,7 @@ export function Users() {
 
       {showCreate && (
         <UserFormModal
+          operators={usersQuery.data?.filter((u) => u.role === 'OPERATOR') ?? []}
           onClose={() => {
             setShowCreate(false);
             setFormError(null);
@@ -189,6 +195,7 @@ export function Users() {
       {editing && (
         <UserFormModal
           initial={editing}
+          operators={usersQuery.data?.filter((u) => u.role === 'OPERATOR' && u.id !== editing.id) ?? []}
           onClose={() => {
             setEditing(null);
             setFormError(null);

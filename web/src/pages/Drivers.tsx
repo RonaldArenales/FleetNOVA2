@@ -10,6 +10,7 @@ export function Drivers() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const canWrite = user?.role === 'ADMIN' || user?.role === 'OPERATOR';
+  const isAdmin = user?.role === 'ADMIN';
 
   const [showCreate, setShowCreate] = useState(false);
   const [editing, setEditing] = useState<Driver | null>(null);
@@ -108,6 +109,7 @@ export function Drivers() {
                 <th className="px-4 py-3">Documento</th>
                 <th className="px-4 py-3">Licencia</th>
                 <th className="px-4 py-3">Teléfono</th>
+                {isAdmin && <th className="px-4 py-3">Propietario</th>}
                 {canWrite && <th className="px-4 py-3 text-right">Acciones</th>}
               </tr>
             </thead>
@@ -119,6 +121,7 @@ export function Drivers() {
                   <td className="px-4 py-3 text-gray-600">{d.documentId}</td>
                   <td className="px-4 py-3 text-gray-600">{d.licenseNumber}</td>
                   <td className="px-4 py-3 text-gray-600">{d.phone ?? '—'}</td>
+                  {isAdmin && <td className="px-4 py-3 text-gray-600">{d.owner?.name ?? '—'}</td>}
                   {canWrite && (
                     <td className="px-4 py-3 text-right">
                       <button

@@ -18,6 +18,7 @@ const selectFields = {
   name: true,
   email: true,
   role: true,
+  viewScopeOwnerId: true,
   createdAt: true,
   updatedAt: true,
 };
@@ -27,6 +28,8 @@ const createUserSchema = z.object({
   email: z.string().email("Correo invalido"),
   password: z.string().min(6, "La contrasena debe tener al menos 6 caracteres"),
   role: z.nativeEnum(Role).optional(),
+  // Solo aplica cuando role = VIEWER: el operador cuya flota puede observar.
+  viewScopeOwnerId: z.number().int().nullable().optional(),
 });
 
 const updateUserSchema = z.object({
@@ -34,6 +37,7 @@ const updateUserSchema = z.object({
   email: z.string().email().optional(),
   password: z.string().min(6).optional(),
   role: z.nativeEnum(Role).optional(),
+  viewScopeOwnerId: z.number().int().nullable().optional(),
 });
 
 // GET /api/users
@@ -48,15 +52,30 @@ router.get(
   })
 );
 
+async function assertValidViewScopeOwner(viewScopeOwnerId: number | null | undefined) {
+  if (viewScopeOwnerId == null) return;
+  const owner = await prisma.user.findUnique({ where: { id: viewScopeOwnerId } });
+  if (!owner || owner.role !== Role.OPERATOR) {
+    throw badRequest("El operador asociado no es valido");
+  }
+}
+
 // POST /api/users
 router.post(
   "/",
   validateBody(createUserSchema),
   asyncHandler(async (req, res) => {
-    const { name, email, password, role } = req.body as z.infer<typeof createUserSchema>;
+    const { name, email, password, role, viewScopeOwnerId } = req.body as z.infer<typeof createUserSchema>;
+    await assertValidViewScopeOwner(viewScopeOwnerId);
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
-      data: { name, email, passwordHash, role: role ?? Role.VIEWER },
+      data: {
+        name,
+        email,
+        passwordHash,
+        role: role ?? Role.VIEWER,
+        viewScopeOwnerId: role === Role.VIEWER ? viewScopeOwnerId ?? null : null,
+      },
       select: selectFields,
     });
     res.status(201).json(user);
@@ -75,6 +94,14 @@ router.patch(
     const existing = await prisma.user.findUnique({ where: { id } });
     if (!existing) {
       throw notFound("Usuario no encontrado");
+    }
+
+    const nextRole = rest.role ?? existing.role;
+    if (nextRole === Role.VIEWER) {
+      await assertValidViewScopeOwner(rest.viewScopeOwnerId);
+    } else {
+      // Un rol distinto a VIEWER no conserva una asociacion de flota.
+      rest.viewScopeOwnerId = null;
     }
 
     const data: Record<string, unknown> = { ...rest };
@@ -105,9 +132,17 @@ router.delete(
   asyncHandler(async (req, res) => {
     const id = Number(req.params.id);
     if (!Number.isInteger(id)) throw badRequest("Identificador de usuario invalido");
-    const existing = await prisma.user.findUnique({ where: { id } });
+    const existing = await prisma.user.findUnique({
+      where: { id },
+      include: { _count: { select: { ownedVehicles: true, ownedDrivers: true } } },
+    });
     if (!existing) {
       throw notFound("Usuario no encontrado");
+    }
+    if (existing._count.ownedVehicles > 0 || existing._count.ownedDrivers > 0) {
+      throw badRequest(
+        "No se puede eliminar: este operador tiene vehiculos o conductores asignados. Reasignalos a otro operador primero."
+      );
     }
     await prisma.user.delete({ where: { id } });
     res.status(204).send();

@@ -5,10 +5,18 @@ import { validateBody } from "../../utils/validate";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { requireAuth, requireRole, requireStaff } from "../../middleware/auth";
 import { notFound, badRequest } from "../../utils/httpError";
+import { getVehicleScope, inScope } from "../../utils/vehicleScope";
 
 const router = Router();
 
 router.use(requireAuth, requireStaff);
+
+async function getDriverInScope(id: number, req: import("express").Request) {
+  const driver = await prisma.driver.findUnique({ where: { id } });
+  const scope = await getVehicleScope(req.user!);
+  if (!driver || !inScope(driver.ownerId, scope)) throw notFound("Conductor no encontrado");
+  return driver;
+}
 
 const driverCreateSchema = z.object({
   name: z.string().min(1, "El nombre es requerido"),
@@ -22,8 +30,13 @@ const driverUpdateSchema = driverCreateSchema.partial();
 // GET /api/drivers
 router.get(
   "/",
-  asyncHandler(async (_req, res) => {
-    const drivers = await prisma.driver.findMany({ orderBy: { createdAt: "asc" } });
+  asyncHandler(async (req, res) => {
+    const scope = await getVehicleScope(req.user!);
+    const drivers = await prisma.driver.findMany({
+      where: scope ? { ownerId: scope.ownerId } : undefined,
+      include: { owner: { select: { id: true, name: true } } },
+      orderBy: { createdAt: "asc" },
+    });
     res.json(drivers);
   })
 );
@@ -34,7 +47,9 @@ router.post(
   requireRole("ADMIN", "OPERATOR"),
   validateBody(driverCreateSchema),
   asyncHandler(async (req, res) => {
-    const driver = await prisma.driver.create({ data: req.body });
+    const driver = await prisma.driver.create({
+      data: { ...req.body, ownerId: req.user!.id },
+    });
     res.status(201).json(driver);
   })
 );
@@ -48,8 +63,7 @@ router.patch(
     const id = Number(req.params.id);
     if (!Number.isInteger(id)) throw badRequest("Identificador de conductor invalido");
 
-    const existing = await prisma.driver.findUnique({ where: { id } });
-    if (!existing) throw notFound("Conductor no encontrado");
+    const existing = await getDriverInScope(id, req);
 
     const driver = await prisma.driver.update({ where: { id }, data: req.body });
 
@@ -75,8 +89,7 @@ router.delete(
     const id = Number(req.params.id);
     if (!Number.isInteger(id)) throw badRequest("Identificador de conductor invalido");
 
-    const existing = await prisma.driver.findUnique({ where: { id } });
-    if (!existing) throw notFound("Conductor no encontrado");
+    await getDriverInScope(id, req);
     await prisma.driver.delete({ where: { id } });
     res.status(204).send();
   })

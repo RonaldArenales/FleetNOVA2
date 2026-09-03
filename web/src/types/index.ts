@@ -7,6 +7,8 @@ export interface User {
   name: string;
   email: string;
   role: Role;
+  // Solo tiene sentido cuando role = VIEWER: el operador cuya flota observa.
+  viewScopeOwnerId?: number | null;
   createdAt?: string;
 }
 
@@ -30,6 +32,8 @@ export interface Vehicle {
   tireLifeKm: number;
   createdAt: string;
   updatedAt: string;
+  ownerId: number;
+  owner?: { id: number; name: string };
 }
 
 export interface GpsPoint {
@@ -82,6 +86,8 @@ export interface Driver {
   licenseNumber: string;
   phone?: string | null;
   createdAt: string;
+  ownerId: number;
+  owner?: { id: number; name: string };
 }
 
 export interface FuelLog {
@@ -131,6 +137,17 @@ export interface DashboardSummary {
   unreadAlerts: number;
   maintenancesDue: number;
   avgFuelConsumptionLper100km: number | null;
+  pendingAccessRequests: number;
+}
+
+export interface AccessRequest {
+  id: number;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  reviewed: boolean;
+  createdAt: string;
 }
 
 export interface FleetReportVehicle {
