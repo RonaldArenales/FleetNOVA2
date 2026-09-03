@@ -83,7 +83,7 @@ async function main() {
     const vehicle = await prisma.vehicle.upsert({
       where: { plate: v.plate },
       update: {},
-      create: v,
+      create: { ...v, ownerId: admin.id },
     });
     vehicles.push(vehicle);
   }
@@ -127,7 +127,7 @@ async function main() {
     const driver = await prisma.driver.upsert({
       where: { documentId: d.documentId },
       update: {},
-      create: d,
+      create: { ...d, ownerId: admin.id },
     });
     drivers.push(driver);
   }
