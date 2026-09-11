@@ -76,8 +76,6 @@ router.get(
 
     if (logs.length < 2) {
       return res.json({
-        kmPerLiter: null,
-        litersPer100Km: null,
         message: "No hay suficientes registros de combustible para calcular el consumo",
       });
     }
@@ -87,8 +85,6 @@ router.get(
 
     if (distanceKm <= 0 || latest.litersAdded <= 0) {
       return res.json({
-        kmPerLiter: null,
-        litersPer100Km: null,
         message: "Datos insuficientes o inconsistentes para calcular el consumo",
       });
     }

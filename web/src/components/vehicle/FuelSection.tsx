@@ -61,7 +61,7 @@ export function FuelSection({ vehicleId }: { vehicleId: string }) {
       <div className="mb-4">
         {consumptionQuery.isLoading && <LoadingState label="Calculando consumo..." />}
         {consumptionQuery.isError && <ErrorState error={consumptionQuery.error} />}
-        {consumptionQuery.data && 'litersPer100Km' in consumptionQuery.data && (
+        {consumptionQuery.data && 'litersPer100Km' in consumptionQuery.data && consumptionQuery.data.litersPer100Km != null && (
           <p className="text-sm text-gray-700">
             Consumo estimado:{' '}
             <span className="font-semibold text-gray-900">{consumptionQuery.data.litersPer100Km.toFixed(2)} L/100km</span>
