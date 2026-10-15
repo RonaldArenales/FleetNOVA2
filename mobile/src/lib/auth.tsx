@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { api, AUTH_STORAGE_EVENT, getApiErrorMessage, getStoredAuth, setStoredAuth, type StoredAuth } from './api';
+import { isPasskeyCeremonyCancelled, loginWithPasskey as loginWithPasskeyRequest, rememberPasskeyEmail } from './webauthn';
 import type { LoginResponse, User } from '../types';
 
 const WEB_APP_URL = import.meta.env.VITE_WEB_APP_URL ?? 'http://localhost:5173';
@@ -9,6 +10,7 @@ interface AuthContextValue {
   token: string | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithPasskey: (email: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -41,6 +43,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const stored: StoredAuth = { token: data.token, user: data.user };
     setStoredAuth(stored);
     setAuth(stored);
+    rememberPasskeyEmail(email);
+  }, []);
+
+  const loginWithPasskey = useCallback(async (email: string) => {
+    let data: LoginResponse;
+    try {
+      data = await loginWithPasskeyRequest(email);
+    } catch (error) {
+      if (isPasskeyCeremonyCancelled(error)) {
+        throw new Error('Cancelaste la verificación biométrica.');
+      }
+      throw new Error(getApiErrorMessage(error, 'No se pudo iniciar sesión con Face ID / Touch ID.'));
+    }
+
+    if (data.user.role !== 'DRIVER') {
+      throw new Error('Esta cuenta no es de conductor. Usa la plataforma web para administrar la flota.');
+    }
+
+    const stored: StoredAuth = { token: data.token, user: data.user };
+    setStoredAuth(stored);
+    setAuth(stored);
+    rememberPasskeyEmail(email);
   }, []);
 
   const logout = useCallback(() => {
@@ -58,9 +82,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       token: auth?.token ?? null,
       isAuthenticated: !!auth?.token,
       login,
+      loginWithPasskey,
       logout,
     }),
-    [auth, login, logout],
+    [auth, login, loginWithPasskey, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

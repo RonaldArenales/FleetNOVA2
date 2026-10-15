@@ -40,7 +40,7 @@ enum AlertLevel {
 //   Driver 100000+  User 200000+  Vehicle 300000+  VehicleDriver 400000+
 //   MaintenanceSchedule 500000+  MaintenanceRecord 600000+  FuelLog 700000+
 //   Alert 800000+  GpsReading 900000+  ObdReading 1000000+
-//   AccessRequest 1100000+
+//   AccessRequest 1100000+  WebAuthnCredential 1200000+
 model User {
   id           Int      @id @default(autoincrement())
   name         String
@@ -65,6 +65,26 @@ model User {
   viewScopeOwnerId Int?
   viewScopeOwner   User?  @relation("ViewScope", fields: [viewScopeOwnerId], references: [id])
   viewers          User[] @relation("ViewScope")
+
+  // Credenciales biometricas (Face ID / Touch ID) registradas via WebAuthn.
+  webauthnCredentials WebAuthnCredential[]
+}
+
+// Una credencial WebAuthn = un autenticador de plataforma (Face ID/Touch ID)
+// registrado en un dispositivo concreto para iniciar sesion sin contrasena.
+model WebAuthnCredential {
+  id           Int       @id @default(autoincrement())
+  userId       Int
+  user         User      @relation(fields: [userId], references: [id])
+  credentialId String    @unique
+  publicKey    Bytes
+  counter      BigInt    @default(0)
+  transports   String[]
+  deviceLabel  String?
+  createdAt    DateTime  @default(now())
+  lastUsedAt   DateTime?
+
+  @@index([userId])
 }
 
 model Vehicle {

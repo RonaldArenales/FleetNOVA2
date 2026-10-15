@@ -99,3 +99,11 @@ export interface DriverMeResponse {
 export interface ApiError {
   error: string;
 }
+
+export interface WebAuthnCredentialSummary {
+  id: number;
+  deviceLabel: string | null;
+  transports: string[];
+  createdAt: string;
+  lastUsedAt: string | null;
+}

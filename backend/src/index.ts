@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 
 import authRoutes from "./modules/auth/auth.routes";
+import webauthnRoutes from "./modules/auth/webauthn.routes";
 import usersRoutes from "./modules/users/users.routes";
 import vehiclesRoutes from "./modules/vehicles/vehicles.routes";
 import driversRoutes from "./modules/drivers/drivers.routes";
@@ -39,6 +40,7 @@ app.get("/api/health", (_req, res) => {
 app.use("/api/public", publicRoutes);
 
 app.use("/api/auth", authRoutes);
+app.use("/api/auth/webauthn", webauthnRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/vehicles", vehiclesRoutes);
 // fuel-logs / fuel-consumption / maintenance-schedules / maintenance-records

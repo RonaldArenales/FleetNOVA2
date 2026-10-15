@@ -24,6 +24,14 @@ services:
         generateValue: true
       - key: CORS_ORIGIN
         value: https://fleetnova2-app.onrender.com,https://fleetnova2-conductor.onrender.com
+      # WebAuthn (Face ID / Touch ID): el RP ID/origen deben ser el dominio
+      # real donde corre la app movil del conductor, no el del API.
+      - key: WEBAUTHN_RP_NAME
+        value: FleetNova
+      - key: WEBAUTHN_RP_ID
+        value: fleetnova2-conductor.onrender.com
+      - key: WEBAUTHN_ORIGIN
+        value: https://fleetnova2-conductor.onrender.com
 
   - type: web
     name: fleetnova2-app
