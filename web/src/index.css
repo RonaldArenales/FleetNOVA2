@@ -93,6 +93,15 @@ body {
   color: #a1a1aa;
 }
 
+/*
+ * Tiles de OpenStreetMap oscurecidos con filtro CSS: dan el look oscuro sin
+ * depender de un proveedor que exija API key. Solo afecta a la capa de tiles,
+ * no al marcador ni a los popups.
+ */
+.map-tiles-dark {
+  filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9) saturate(0.5);
+}
+
 .truck-marker {
   background: none;
   border: none;
