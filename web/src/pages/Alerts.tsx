@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../lib/api';
 import type { Alert, Vehicle } from '../types';
 import { LoadingState, ErrorState, EmptyState } from '../components/QueryState';
 import { AlertLevelBadge } from '../components/Badges';
+
+const PAGE_SIZE = 10;
 
 function formatDateTime(value: string) {
   try {
@@ -17,6 +19,12 @@ export function Alerts() {
   const queryClient = useQueryClient();
   const [vehicleId, setVehicleId] = useState('');
   const [onlyUnread, setOnlyUnread] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+  // Si cambian los filtros, se vuelve a empezar desde las 10 mas recientes.
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [vehicleId, onlyUnread]);
 
   const vehiclesQuery = useQuery({
     queryKey: ['vehicles', {}],
@@ -27,17 +35,21 @@ export function Alerts() {
   });
 
   const alertsQuery = useQuery({
-    queryKey: ['alerts', { vehicleId, onlyUnread }],
+    queryKey: ['alerts', { vehicleId, onlyUnread, visibleCount }],
     queryFn: async () => {
       const { data } = await api.get<Alert[]>('/alerts', {
         params: {
           vehicleId: vehicleId || undefined,
           unread: onlyUnread || undefined,
+          take: visibleCount,
         },
       });
       return data;
     },
   });
+
+  // Si llegaron menos alertas de las pedidas, ya no hay mas que cargar.
+  const hasMore = (alertsQuery.data?.length ?? 0) >= visibleCount;
 
   const markReadMutation = useMutation({
     mutationFn: async (id: number) => {
@@ -64,8 +76,8 @@ export function Alerts() {
           </svg>
         </div>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Alertas</h1>
-          <p className="text-sm text-gray-500">Notificaciones generadas por la flota</p>
+          <h1 className="text-3xl font-bold tracking-tight text-ink-50">Alertas</h1>
+          <p className="text-sm text-ink-500">Notificaciones generadas por la flota</p>
         </div>
       </div>
 
@@ -82,7 +94,7 @@ export function Alerts() {
             </option>
           ))}
         </select>
-        <label className="flex items-center gap-2 text-sm text-gray-600">
+        <label className="flex items-center gap-2 text-sm text-ink-400">
           <input type="checkbox" checked={onlyUnread} onChange={(e) => setOnlyUnread(e.target.checked)} />
           Solo no leídas
         </label>
@@ -103,7 +115,7 @@ export function Alerts() {
         {alertsQuery.data && alertsQuery.data.length > 0 && (
           <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+            <thead className="table-head">
               <tr>
                 <th className="px-4 py-3">Nivel</th>
                 <th className="px-4 py-3">Mensaje</th>
@@ -113,16 +125,16 @@ export function Alerts() {
                 <th className="px-4 py-3 text-right">Acción</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-ink-800">
               {alertsQuery.data.map((alert) => (
-                <tr key={alert.id} className={alert.read ? '' : 'bg-indigo-50/50'}>
+                <tr key={alert.id} className={alert.read ? '' : 'bg-indigo-500/5'}>
                   <td className="px-4 py-3">
                     <AlertLevelBadge level={alert.level} />
                   </td>
-                  <td className="px-4 py-3 text-gray-700">{alert.message}</td>
-                  <td className="px-4 py-3 text-gray-600">{plateById.get(alert.vehicleId) ?? alert.vehicleId}</td>
-                  <td className="px-4 py-3 text-gray-500">{formatDateTime(alert.createdAt)}</td>
-                  <td className="px-4 py-3 text-gray-600">{alert.read ? 'Leída' : 'Sin leer'}</td>
+                  <td className="px-4 py-3 text-ink-300">{alert.message}</td>
+                  <td className="px-4 py-3 font-mono text-ink-400">{plateById.get(alert.vehicleId) ?? alert.vehicleId}</td>
+                  <td className="px-4 py-3 text-ink-500">{formatDateTime(alert.createdAt)}</td>
+                  <td className="px-4 py-3 text-ink-400">{alert.read ? 'Leída' : 'Sin leer'}</td>
                   <td className="px-4 py-3 text-right">
                     {!alert.read && (
                       <button
@@ -138,6 +150,18 @@ export function Alerts() {
               ))}
             </tbody>
           </table>
+          </div>
+        )}
+        {alertsQuery.data && alertsQuery.data.length > 0 && hasMore && (
+          <div className="p-4">
+            <button
+              type="button"
+              onClick={() => setVisibleCount((n) => n + PAGE_SIZE)}
+              disabled={alertsQuery.isFetching}
+              className="btn-secondary w-full"
+            >
+              {alertsQuery.isFetching ? 'Cargando...' : 'Ver más'}
+            </button>
           </div>
         )}
       </div>

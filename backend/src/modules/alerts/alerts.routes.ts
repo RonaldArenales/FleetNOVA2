@@ -4,6 +4,7 @@ import { prisma } from "../../lib/prisma";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { requireAuth, requireStaff } from "../../middleware/auth";
 import { badRequest, notFound } from "../../utils/httpError";
+import { parseTake } from "../../utils/validate";
 import { getVehicleScope, inScope } from "../../utils/vehicleScope";
 
 const router = Router();
@@ -24,9 +25,13 @@ router.get(
     const scope = await getVehicleScope(req.user!);
     if (scope) where.vehicle = { ownerId: scope.ownerId };
 
+    // "Ver mas" en el panel web pide "take" alertas mas recientes.
+    const take = parseTake(req.query.take, 10, 500);
+
     const alerts = await prisma.alert.findMany({
       where,
       orderBy: { createdAt: "desc" },
+      take,
     });
     res.json(alerts);
   })

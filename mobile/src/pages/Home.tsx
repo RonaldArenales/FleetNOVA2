@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { api } from '../lib/api';
+import { formatKm } from '../lib/format';
 import { useAuth } from '../lib/auth';
 import type { DriverMeResponse, VehicleStatusResponse } from '../types';
 import { PageHeader } from '../components/PageHeader';
@@ -66,7 +67,7 @@ export function Home() {
                 <VehicleStatusBadge status={meQuery.data.vehicle.status} />
               </div>
               <p className="mt-3 text-sm text-gray-600">
-                Odómetro: <span className="font-semibold">{meQuery.data.vehicle.odometerKm.toLocaleString('es')} km</span>
+                Odómetro: <span className="font-semibold">{formatKm(meQuery.data.vehicle.odometerKm)} km</span>
               </p>
             </div>
 

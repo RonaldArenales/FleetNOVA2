@@ -72,8 +72,8 @@ export function Drivers() {
             </svg>
           </div>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">Conductores</h1>
-            <p className="text-sm text-gray-500">Personal habilitado para conducir la flota</p>
+            <h1 className="text-3xl font-bold tracking-tight text-ink-50">Conductores</h1>
+            <p className="text-sm text-ink-500">Personal habilitado para conducir la flota</p>
           </div>
         </div>
         {canWrite && (
@@ -102,7 +102,7 @@ export function Drivers() {
         {driversQuery.data && driversQuery.data.length > 0 && (
           <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+            <thead className="table-head">
               <tr>
                 <th className="px-4 py-3">Código</th>
                 <th className="px-4 py-3">Nombre</th>
@@ -113,15 +113,15 @@ export function Drivers() {
                 {canWrite && <th className="px-4 py-3 text-right">Acciones</th>}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-ink-800">
               {driversQuery.data.map((d) => (
-                <tr key={d.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 font-mono text-xs text-gray-500">{d.id}</td>
-                  <td className="px-4 py-3 font-medium text-gray-800">{d.name}</td>
-                  <td className="px-4 py-3 text-gray-600">{d.documentId}</td>
-                  <td className="px-4 py-3 text-gray-600">{d.licenseNumber}</td>
-                  <td className="px-4 py-3 text-gray-600">{d.phone ?? '—'}</td>
-                  {isAdmin && <td className="px-4 py-3 text-gray-600">{d.owner?.name ?? '—'}</td>}
+                <tr key={d.id} className="hover:bg-ink-800/60">
+                  <td className="px-4 py-3 font-mono text-xs tabular-nums text-ink-500">{d.id}</td>
+                  <td className="px-4 py-3 font-medium text-ink-200">{d.name}</td>
+                  <td className="px-4 py-3 text-ink-400">{d.documentId}</td>
+                  <td className="px-4 py-3 text-ink-400">{d.licenseNumber}</td>
+                  <td className="px-4 py-3 text-ink-400">{d.phone ?? '—'}</td>
+                  {isAdmin && <td className="px-4 py-3 text-ink-400">{d.owner?.name ?? '—'}</td>}
                   {canWrite && (
                     <td className="px-4 py-3 text-right">
                       <button

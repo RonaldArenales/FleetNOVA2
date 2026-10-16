@@ -2,7 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { VehicleStatus, Prisma } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
-import { validateBody } from "../../utils/validate";
+import { validateBody, parseTake } from "../../utils/validate";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { requireAuth, requireRole, requireStaff } from "../../middleware/auth";
 import { badRequest, notFound } from "../../utils/httpError";
@@ -247,7 +247,10 @@ router.get(
       readings.map((r) => ({ lat: r.lat, lng: r.lng, speedKph: r.speedKph, timestamp: r.timestamp }))
     );
 
-    res.json(trips);
+    // "Ver mas" en el panel web pide "take" viajes mas recientes primero
+    // (computeTrips devuelve orden cronologico ascendente).
+    const take = parseTake(req.query.take, 10, 500);
+    res.json(trips.slice(-take).reverse());
   })
 );
 

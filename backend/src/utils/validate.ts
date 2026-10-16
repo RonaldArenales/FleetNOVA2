@@ -34,3 +34,13 @@ export const validateQuery =
     (req as any).validatedQuery = result.data;
     next();
   };
+
+/**
+ * Parses a positive integer "take" query param (how many of the most
+ * recent items a "Ver mas" button should request), clamped to [1, max].
+ * Falls back to `def` when missing or invalid.
+ */
+export function parseTake(raw: unknown, def: number, max: number): number {
+  const n = Number(raw);
+  return Number.isInteger(n) && n > 0 ? Math.min(n, max) : def;
+}

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api, getApiErrorMessage } from '../lib/api';
+import { formatKm } from '../lib/format';
 import { useAuth } from '../lib/auth';
 import type { Vehicle, VehicleStatusResponse } from '../types';
 import { LoadingState, ErrorState } from '../components/QueryState';
@@ -76,14 +77,14 @@ export function VehicleDetail() {
           <div className="flex flex-wrap items-start justify-between gap-4 card p-5">
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-3xl font-bold tracking-tight text-gray-900">{vehicleQuery.data.plate}</h1>
+                <h1 className="font-mono text-3xl font-bold tracking-tight text-ink-50">{vehicleQuery.data.plate}</h1>
                 <VehicleStatusBadge status={vehicleQuery.data.status} />
               </div>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-ink-400">
                 {vehicleQuery.data.brand} {vehicleQuery.data.model} · {vehicleQuery.data.year}
               </p>
-              <p className="mt-1 text-sm text-gray-500">Odómetro: {vehicleQuery.data.odometerKm.toLocaleString('es')} km</p>
-              {vehicleQuery.data.vin && <p className="mt-1 text-xs text-gray-400">VIN: {vehicleQuery.data.vin}</p>}
+              <p className="mt-1 text-sm text-ink-400">Odómetro: {formatKm(vehicleQuery.data.odometerKm)} km</p>
+              {vehicleQuery.data.vin && <p className="mt-1 text-xs text-ink-600">VIN: {vehicleQuery.data.vin}</p>}
             </div>
             {canWrite && (
               <button
@@ -105,8 +106,8 @@ export function VehicleDetail() {
           <LocationSection gps={statusQuery.data?.gps ?? null} plate={vehicleQuery.data.plate} />
           <MechanicalSection obd={statusQuery.data?.obd ?? null} />
           <TireWearSection vehicleId={id} />
-          <FuelSection vehicleId={id} />
-          <MaintenanceSection vehicleId={id} />
+          <FuelSection vehicleId={id} currentOdometerKm={vehicleQuery.data.odometerKm} />
+          <MaintenanceSection vehicleId={id} currentOdometerKm={vehicleQuery.data.odometerKm} />
           <TripsSection vehicleId={id} />
           <DriverSection vehicleId={id} canWrite={canWrite} />
 
@@ -126,7 +127,7 @@ export function VehicleDetail() {
       )}
 
       {!vehicleQuery.isLoading && !vehicleQuery.data && !vehicleQuery.isError && (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-ink-500">
           Vehículo no encontrado. <Link to="/vehiculos" className="link-action">Volver</Link>
         </p>
       )}

@@ -83,7 +83,7 @@ export function Users() {
 
   if (!isAdmin) {
     return (
-      <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-6 text-sm text-yellow-800">
+      <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 p-6 text-sm text-amber-300">
         No autorizado. Esta sección es exclusiva para usuarios con rol de administrador.
       </div>
     );
@@ -103,8 +103,8 @@ export function Users() {
             </svg>
           </div>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">Usuarios</h1>
-            <p className="text-sm text-gray-500">Cuentas con acceso a la plataforma</p>
+            <h1 className="text-3xl font-bold tracking-tight text-ink-50">Usuarios</h1>
+            <p className="text-sm text-ink-500">Cuentas con acceso a la plataforma</p>
           </div>
         </div>
         <button
@@ -131,7 +131,7 @@ export function Users() {
         {usersQuery.data && usersQuery.data.length > 0 && (
           <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+            <thead className="table-head">
               <tr>
                 <th className="px-4 py-3">Nombre</th>
                 <th className="px-4 py-3">Correo</th>
@@ -140,13 +140,13 @@ export function Users() {
                 <th className="px-4 py-3 text-right">Acciones</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-ink-800">
               {usersQuery.data.map((u) => (
-                <tr key={u.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium text-gray-800">{u.name}</td>
-                  <td className="px-4 py-3 text-gray-600">{u.email}</td>
-                  <td className="px-4 py-3 text-gray-600">{roleLabels[u.role] ?? u.role}</td>
-                  <td className="px-4 py-3 text-gray-600">{formatDate(u.createdAt)}</td>
+                <tr key={u.id} className="hover:bg-ink-800/60">
+                  <td className="px-4 py-3 font-medium text-ink-200">{u.name}</td>
+                  <td className="px-4 py-3 text-ink-400">{u.email}</td>
+                  <td className="px-4 py-3 text-ink-400">{roleLabels[u.role] ?? u.role}</td>
+                  <td className="px-4 py-3 text-ink-400">{formatDate(u.createdAt)}</td>
                   <td className="px-4 py-3 text-right">
                     <button
                       type="button"
@@ -166,7 +166,7 @@ export function Users() {
                           deleteMutation.mutate(u.id);
                         }
                       }}
-                      className="link-danger disabled:cursor-not-allowed disabled:text-gray-300 disabled:hover:no-underline"
+                      className="link-danger disabled:cursor-not-allowed disabled:text-ink-700 disabled:hover:no-underline"
                     >
                       Eliminar
                     </button>

@@ -24,9 +24,12 @@ async function assertVehicleInScope(id: number, req: import("express").Request) 
   if (!vehicle || !inScope(vehicle.ownerId, scope)) throw notFound("Vehiculo no encontrado");
 }
 
+// z.coerce.date() (no z.string().datetime()) porque el selector de fecha
+// del formulario ("Fecha límite") manda solo "2026-10-20", sin hora ni
+// timezone, y .datetime() exige un ISO 8601 completo y lo rechaza.
 const scheduleCreateSchema = z.object({
   type: z.string().min(1, "El tipo es requerido"),
-  dueDate: z.string().datetime().optional(),
+  dueDate: z.coerce.date().optional(),
   dueOdometerKm: z.number().optional(),
   description: z.string().optional(),
   status: z.nativeEnum(MaintenanceStatus).optional(),
@@ -37,7 +40,7 @@ const recordCreateSchema = z.object({
   description: z.string().optional(),
   cost: z.number().optional(),
   odometerKm: z.number(),
-  performedAt: z.string().datetime().optional(),
+  performedAt: z.coerce.date().optional(),
 });
 
 // GET /api/vehicles/:id/maintenance-schedules
@@ -71,7 +74,7 @@ vehicleMaintenanceRouter.post(
       data: {
         vehicleId: id,
         type,
-        dueDate: dueDate ? new Date(dueDate) : undefined,
+        dueDate,
         dueOdometerKm,
         description,
         status: status ?? MaintenanceStatus.SCHEDULED,
@@ -115,7 +118,7 @@ vehicleMaintenanceRouter.post(
         description,
         cost,
         odometerKm,
-        ...(performedAt ? { performedAt: new Date(performedAt) } : {}),
+        ...(performedAt ? { performedAt } : {}),
       },
     });
     res.status(201).json(record);
@@ -130,7 +133,7 @@ maintenanceSchedulesRouter.use(requireAuth, requireStaff);
 
 const scheduleUpdateSchema = z.object({
   type: z.string().optional(),
-  dueDate: z.string().datetime().optional(),
+  dueDate: z.coerce.date().optional(),
   dueOdometerKm: z.number().optional(),
   description: z.string().optional(),
   status: z.nativeEnum(MaintenanceStatus).optional(),
@@ -153,7 +156,7 @@ maintenanceSchedulesRouter.patch(
       where: { id },
       data: {
         ...rest,
-        ...(dueDate ? { dueDate: new Date(dueDate) } : {}),
+        ...(dueDate ? { dueDate } : {}),
       },
     });
 

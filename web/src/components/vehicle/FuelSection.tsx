@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { api, getApiErrorMessage } from '../../lib/api';
+import { formatKm } from '../../lib/format';
 import type { FuelConsumption, FuelLog } from '../../types';
 import { Section } from './Section';
 import { LoadingState, ErrorState, EmptyState } from '../QueryState';
@@ -20,7 +21,7 @@ function formatDate(value: string) {
   }
 }
 
-export function FuelSection({ vehicleId }: { vehicleId: string }) {
+export function FuelSection({ vehicleId, currentOdometerKm }: { vehicleId: string; currentOdometerKm: number }) {
   const queryClient = useQueryClient();
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -40,7 +41,11 @@ export function FuelSection({ vehicleId }: { vehicleId: string }) {
     },
   });
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<FuelLogForm>();
+  // <input type="number"> no admite separadores de miles: se redondea a 3
+  // decimales para no mostrar el ruido de punto flotante de las lecturas OBD.
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<FuelLogForm>({
+    defaultValues: { odometerAtFill: Math.round(currentOdometerKm * 1000) / 1000 },
+  });
 
   const createMutation = useMutation({
     mutationFn: async (values: FuelLogForm) => {
@@ -62,13 +67,13 @@ export function FuelSection({ vehicleId }: { vehicleId: string }) {
         {consumptionQuery.isLoading && <LoadingState label="Calculando consumo..." />}
         {consumptionQuery.isError && <ErrorState error={consumptionQuery.error} />}
         {consumptionQuery.data && 'litersPer100Km' in consumptionQuery.data && consumptionQuery.data.litersPer100Km != null && (
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-ink-300">
             Consumo estimado:{' '}
-            <span className="font-semibold text-gray-900">{consumptionQuery.data.litersPer100Km.toFixed(2)} L/100km</span>
+            <span className="font-mono font-semibold tabular-nums text-ink-50">{consumptionQuery.data.litersPer100Km.toFixed(2)} L/100km</span>
           </p>
         )}
         {consumptionQuery.data && 'message' in consumptionQuery.data && (
-          <p className="text-sm text-gray-500">{consumptionQuery.data.message}</p>
+          <p className="text-sm text-ink-500">{consumptionQuery.data.message}</p>
         )}
       </div>
 
@@ -78,7 +83,7 @@ export function FuelSection({ vehicleId }: { vehicleId: string }) {
       {logsQuery.data && logsQuery.data.length > 0 && (
         <div className="mb-4 overflow-x-auto">
         <table className="w-full text-left text-sm">
-          <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+          <thead className="table-head">
             <tr>
               <th className="px-3 py-2">Fecha</th>
               <th className="px-3 py-2">Litros</th>
@@ -86,13 +91,13 @@ export function FuelSection({ vehicleId }: { vehicleId: string }) {
               <th className="px-3 py-2">Odómetro</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-ink-800">
             {logsQuery.data.map((log) => (
               <tr key={log.id}>
-                <td className="px-3 py-2 text-gray-600">{formatDate(log.timestamp)}</td>
-                <td className="px-3 py-2 text-gray-600">{log.litersAdded} L</td>
-                <td className="px-3 py-2 text-gray-600">{log.cost != null ? `$${log.cost.toFixed(2)}` : '—'}</td>
-                <td className="px-3 py-2 text-gray-600">{log.odometerAtFill.toLocaleString('es')} km</td>
+                <td className="px-3 py-2 text-ink-400">{formatDate(log.timestamp)}</td>
+                <td className="px-3 py-2 font-mono tabular-nums text-ink-400">{log.litersAdded} L</td>
+                <td className="px-3 py-2 font-mono tabular-nums text-ink-400">{log.cost != null ? `$${log.cost.toFixed(2)}` : '—'}</td>
+                <td className="px-3 py-2 font-mono tabular-nums text-ink-400">{formatKm(log.odometerAtFill)} km</td>
               </tr>
             ))}
           </tbody>
@@ -108,10 +113,10 @@ export function FuelSection({ vehicleId }: { vehicleId: string }) {
             odometerAtFill: Number(values.odometerAtFill),
           }),
         )}
-        className="grid grid-cols-1 gap-3 border-t border-gray-100 pt-4 sm:grid-cols-4"
+        className="grid grid-cols-1 gap-3 border-t border-ink-800 pt-4 sm:grid-cols-4"
       >
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-600">Litros</label>
+          <label className="mb-1 block text-xs font-medium text-ink-400">Litros</label>
           <input
             type="number"
             step="0.01"
@@ -121,7 +126,7 @@ export function FuelSection({ vehicleId }: { vehicleId: string }) {
           {errors.litersAdded && <p className="mt-1 text-xs text-red-600">Requerido</p>}
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-600">Costo (opcional)</label>
+          <label className="mb-1 block text-xs font-medium text-ink-400">Costo (opcional)</label>
           <input
             type="number"
             step="0.01"
@@ -130,7 +135,7 @@ export function FuelSection({ vehicleId }: { vehicleId: string }) {
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-600">Odómetro</label>
+          <label className="mb-1 block text-xs font-medium text-ink-400">Odómetro</label>
           <input
             type="number"
             className="field-input w-full"

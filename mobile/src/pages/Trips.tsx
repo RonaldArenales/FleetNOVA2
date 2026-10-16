@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
 import type { Trip } from '../types';
 import { LoadingState, ErrorState, EmptyState } from '../components/QueryState';
+
+const PAGE_SIZE = 10;
 
 function formatDateTime(value: string) {
   try {
@@ -14,14 +17,18 @@ function formatDateTime(value: string) {
 
 export function Trips() {
   const navigate = useNavigate();
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const query = useQuery({
-    queryKey: ['driver-trips'],
+    queryKey: ['driver-trips', visibleCount],
     queryFn: async () => {
-      const { data } = await api.get<Trip[]>('/driver/vehicle/trips');
+      const { data } = await api.get<Trip[]>('/driver/vehicle/trips', { params: { take: visibleCount } });
       return data;
     },
   });
+
+  // Si llegaron menos viajes de los pedidos, ya no hay mas que cargar.
+  const hasMore = (query.data?.length ?? 0) >= visibleCount;
 
   return (
     <div>
@@ -51,6 +58,16 @@ export function Trips() {
             <p className="mt-1 text-xs text-gray-400">Velocidad promedio: {trip.avgSpeedKph.toFixed(1)} km/h</p>
           </div>
         ))}
+        {query.data && query.data.length > 0 && hasMore && (
+          <button
+            type="button"
+            onClick={() => setVisibleCount((n) => n + PAGE_SIZE)}
+            disabled={query.isFetching}
+            className="btn-secondary w-full"
+          >
+            {query.isFetching ? 'Cargando...' : 'Ver más'}
+          </button>
+        )}
       </div>
     </div>
   );

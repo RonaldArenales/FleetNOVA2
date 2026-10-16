@@ -40,7 +40,7 @@ export function DriverSection({ vehicleId, canWrite }: { vehicleId: string; canW
       {driversQuery.isError && <ErrorState error={driversQuery.error} retry={() => driversQuery.refetch()} />}
       {driversQuery.data && (
         <div className="space-y-3">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-ink-500">
             La API no expone directamente el conductor asignado a un vehículo; usa el siguiente formulario para asignar uno.
           </p>
           {canWrite ? (
@@ -67,10 +67,10 @@ export function DriverSection({ vehicleId, canWrite }: { vehicleId: string; canW
               </button>
             </div>
           ) : (
-            <p className="text-sm text-gray-500">No tienes permisos para asignar conductores.</p>
+            <p className="text-sm text-ink-500">No tienes permisos para asignar conductores.</p>
           )}
-          {error && <p className="text-sm text-red-600">{error}</p>}
-          {success && <p className="text-sm text-green-600">{success}</p>}
+          {error && <p className="text-sm text-rose-400">{error}</p>}
+          {success && <p className="text-sm text-emerald-400">{success}</p>}
         </div>
       )}
     </Section>

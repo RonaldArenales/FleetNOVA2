@@ -10,14 +10,14 @@ export function Modal({
   children: ReactNode;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl bg-white shadow-2xl">
-        <div className="flex items-center justify-between border-b border-gray-200 px-5 py-3">
-          <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg border border-ink-800 bg-ink-900 shadow-2xl shadow-black/40">
+        <div className="flex items-center justify-between border-b border-ink-800 px-5 py-3">
+          <h2 className="text-lg font-semibold text-ink-100">{title}</h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            className="rounded-full p-1 text-ink-500 hover:bg-ink-800 hover:text-ink-300"
             aria-label="Cerrar"
           >
             ✕

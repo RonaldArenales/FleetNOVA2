@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
+import { formatKm } from '../lib/format';
 import type { MaintenanceSchedule } from '../types';
 import { PageHeader } from '../components/PageHeader';
 import { LoadingState, ErrorState, EmptyState } from '../components/QueryState';
@@ -42,7 +43,7 @@ export function Maintenance() {
               {schedule.description && <p className="mt-1 text-sm text-gray-500">{schedule.description}</p>}
               <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
                 {dueDate && <span>Fecha límite: {dueDate}</span>}
-                {schedule.dueOdometerKm != null && <span>Odómetro límite: {schedule.dueOdometerKm.toLocaleString('es')} km</span>}
+                {schedule.dueOdometerKm != null && <span>Odómetro límite: {formatKm(schedule.dueOdometerKm)} km</span>}
               </div>
             </div>
           );

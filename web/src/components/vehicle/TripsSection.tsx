@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import type { Trip } from '../../types';
 import { Section } from './Section';
 import { LoadingState, ErrorState, EmptyState } from '../QueryState';
+
+const PAGE_SIZE = 10;
 
 function formatDate(value: string) {
   try {
@@ -13,13 +16,18 @@ function formatDate(value: string) {
 }
 
 export function TripsSection({ vehicleId }: { vehicleId: string }) {
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
   const query = useQuery({
-    queryKey: ['vehicle', vehicleId, 'trips'],
+    queryKey: ['vehicle', vehicleId, 'trips', visibleCount],
     queryFn: async () => {
-      const { data } = await api.get<Trip[]>(`/vehicles/${vehicleId}/trips`);
+      const { data } = await api.get<Trip[]>(`/vehicles/${vehicleId}/trips`, { params: { take: visibleCount } });
       return data;
     },
   });
+
+  // Si llegaron menos viajes de los pedidos, ya no hay mas que cargar.
+  const hasMore = (query.data?.length ?? 0) >= visibleCount;
 
   return (
     <Section title="Historial de recorridos">
@@ -29,7 +37,7 @@ export function TripsSection({ vehicleId }: { vehicleId: string }) {
       {query.data && query.data.length > 0 && (
         <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
-          <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+          <thead className="table-head">
             <tr>
               <th className="px-3 py-2">Inicio</th>
               <th className="px-3 py-2">Fin</th>
@@ -38,19 +46,29 @@ export function TripsSection({ vehicleId }: { vehicleId: string }) {
               <th className="px-3 py-2">Velocidad promedio</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-ink-800">
             {query.data.map((trip, idx) => (
               <tr key={`${trip.startTime}-${idx}`}>
-                <td className="px-3 py-2 text-gray-600">{formatDate(trip.startTime)}</td>
-                <td className="px-3 py-2 text-gray-600">{formatDate(trip.endTime)}</td>
-                <td className="px-3 py-2 text-gray-600">{trip.distanceKm.toFixed(1)} km</td>
-                <td className="px-3 py-2 text-gray-600">{Math.round(trip.durationMinutes)} min</td>
-                <td className="px-3 py-2 text-gray-600">{trip.avgSpeedKph.toFixed(1)} km/h</td>
+                <td className="px-3 py-2 text-ink-400">{formatDate(trip.startTime)}</td>
+                <td className="px-3 py-2 text-ink-400">{formatDate(trip.endTime)}</td>
+                <td className="px-3 py-2 font-mono tabular-nums text-ink-400">{trip.distanceKm.toFixed(1)} km</td>
+                <td className="px-3 py-2 font-mono tabular-nums text-ink-400">{Math.round(trip.durationMinutes)} min</td>
+                <td className="px-3 py-2 font-mono tabular-nums text-ink-400">{trip.avgSpeedKph.toFixed(1)} km/h</td>
               </tr>
             ))}
           </tbody>
         </table>
         </div>
+      )}
+      {query.data && query.data.length > 0 && hasMore && (
+        <button
+          type="button"
+          onClick={() => setVisibleCount((n) => n + PAGE_SIZE)}
+          disabled={query.isFetching}
+          className="btn-secondary w-full"
+        >
+          {query.isFetching ? 'Cargando...' : 'Ver más'}
+        </button>
       )}
     </Section>
   );

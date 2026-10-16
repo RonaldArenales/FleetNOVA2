@@ -3,6 +3,7 @@ import { prisma } from "../../lib/prisma";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { requireAuth, requireRole } from "../../middleware/auth";
 import { notFound } from "../../utils/httpError";
+import { parseTake } from "../../utils/validate";
 import { computeTrips } from "../../utils/trips";
 
 const router = Router();
@@ -98,7 +99,11 @@ router.get(
     const trips = computeTrips(
       readings.map((r) => ({ lat: r.lat, lng: r.lng, speedKph: r.speedKph, timestamp: r.timestamp }))
     );
-    res.json(trips);
+
+    // "Ver mas" en la app movil pide "take" viajes mas recientes primero
+    // (computeTrips devuelve orden cronologico ascendente).
+    const take = parseTake(req.query.take, 10, 500);
+    res.json(trips.slice(-take).reverse());
   })
 );
 
@@ -107,9 +112,15 @@ router.get(
   "/alerts",
   asyncHandler(async (req, res) => {
     const { vehicleId } = await getAssignedVehicleId(req.user!.id);
+    // El conductor pide "take" alertas mas recientes (boton "Ver mas" en la
+    // app movil crece este numero en vez de paginar con skip/cursor).
+    const takeParam = Number(req.query.take);
+    const take = Number.isInteger(takeParam) && takeParam > 0 ? Math.min(takeParam, 200) : 10;
+
     const alerts = await prisma.alert.findMany({
       where: { vehicleId },
       orderBy: { createdAt: "desc" },
+      take,
     });
     res.json(alerts);
   })

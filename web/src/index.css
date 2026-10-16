@@ -13,11 +13,29 @@
   --font-body: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
+/* Paleta del panel: fondo azul oscuro (escala slate) + acento indigo,
+   la paleta "azul y blanco" original -- los nombres de clase ("ink-*")
+   se mantienen igual, solo cambian los valores para no tener que tocar
+   cada componente que ya los usa. */
+@theme {
+  --color-ink-950: #020617;
+  --color-ink-900: #0f172a;
+  --color-ink-800: #1e293b;
+  --color-ink-700: #334155;
+  --color-ink-600: #475569;
+  --color-ink-500: #64748b;
+  --color-ink-400: #94a3b8;
+  --color-ink-300: #cbd5e1;
+  --color-ink-200: #e2e8f0;
+  --color-ink-100: #f1f5f9;
+  --color-ink-50: #ffffff;
+}
+
 body {
   margin: 0;
   font-family: var(--font-body);
-  background-color: #f3f4f6;
-  color: #1f2937;
+  background-color: #020617;
+  color: #f1f5f9;
 }
 
 .leaflet-container {
@@ -66,30 +84,44 @@ body {
   }
 }
 
+/* El panel autenticado (todo lo que cuelga de Layout.tsx) usa la misma
+   tipografia limpia en titulos y cuerpo, como la referencia de dashboard
+   financiero que pidio el usuario -- en vez de la fuente display mas
+   condensada que sigue usando la landing publica. */
+.dashboard-shell h1,
+.dashboard-shell h2,
+.dashboard-shell h3 {
+  font-family: var(--font-body);
+  letter-spacing: -0.01em;
+}
+
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98];
+    @apply inline-flex items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-700 px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-indigo-900/40 transition-opacity duration-150 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98];
   }
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors duration-150 hover:border-gray-400 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98];
+    @apply inline-flex items-center justify-center gap-1.5 rounded-full border border-ink-700 bg-ink-800 px-5 py-2 text-sm font-semibold text-ink-200 transition-colors duration-150 hover:border-ink-600 hover:bg-ink-700 disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98];
   }
   .btn-danger {
-    @apply inline-flex items-center justify-center gap-1.5 rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98];
+    @apply inline-flex items-center justify-center gap-1.5 rounded-full bg-rose-600 px-5 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-rose-500 disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98];
   }
   .link-action {
-    @apply font-medium text-indigo-600 transition-colors hover:text-indigo-800 hover:underline;
+    @apply font-medium text-indigo-400 transition-colors hover:text-indigo-300 hover:underline;
   }
   .link-danger {
-    @apply font-medium text-red-600 transition-colors hover:text-red-800 hover:underline;
+    @apply font-medium text-rose-400 transition-colors hover:text-rose-300 hover:underline;
   }
   .card {
-    @apply rounded-xl border border-gray-100 bg-white shadow-sm shadow-gray-200/60;
+    @apply rounded-2xl border border-ink-800 bg-ink-900;
   }
   .field-input {
-    @apply rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm transition-colors focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30;
+    @apply rounded-full border border-ink-700 bg-ink-900 px-4 py-2 text-sm text-ink-100 shadow-none transition-colors placeholder:text-ink-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30;
   }
   .icon-badge {
-    @apply flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border-2 border-indigo-100 bg-indigo-50 text-indigo-600;
+    @apply flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl border border-indigo-500/20 bg-indigo-500/10 text-indigo-400;
+  }
+  .table-head {
+    @apply bg-ink-900/60 text-xs font-medium uppercase tracking-wide text-ink-400;
   }
   .font-display {
     font-family: var(--font-display);
