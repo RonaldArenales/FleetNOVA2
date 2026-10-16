@@ -71,11 +71,7 @@ export function Layout() {
         }`}
       >
         <div className="flex items-center gap-3 px-6 py-6">
-          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-brand-400 shadow-lg shadow-brand-400/20">
-            <svg className="h-5 w-5 text-ink-950" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d={TRUCK_PATH} />
-            </svg>
-          </div>
+          <img src="/logo-mark.png" alt="" aria-hidden="true" className="h-12 w-12 flex-shrink-0" />
           <div>
             <span className="font-display text-lg font-black uppercase leading-none tracking-tight text-white">
               Fleet<span className="text-brand-400">Nova</span>

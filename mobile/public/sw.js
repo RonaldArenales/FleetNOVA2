@@ -1,5 +1,5 @@
-const CACHE_NAME = "fleetnova-conductor-v2";
-const APP_SHELL = ["/", "/index.html", "/icon.svg", "/manifest.json"];
+const CACHE_NAME = "fleetnova-conductor-v3";
+const APP_SHELL = ["/", "/index.html", "/icon.svg", "/icon-192.png", "/logo-mark.png", "/manifest.json"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
