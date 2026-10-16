@@ -68,11 +68,7 @@ export function Login() {
       <div className="relative mx-auto w-full max-w-sm px-6 pb-10 pt-[max(2.5rem,env(safe-area-inset-top))]">
         <div className="mb-8">
           <div className="mb-6 flex items-center gap-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-400 shadow-lg shadow-brand-400/20">
-              <svg className="h-5 w-5 text-ink-950" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.25h5.25M3 12h12.75" />
-              </svg>
-            </div>
+            <img src="/logo-mark.png" alt="" aria-hidden="true" className="h-12 w-12" />
             <span className="font-display text-lg font-black uppercase tracking-tight text-white">
               Fleet<span className="text-brand-400">Nova</span>
             </span>

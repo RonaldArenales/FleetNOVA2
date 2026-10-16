@@ -167,10 +167,8 @@ const HERO_STATS = [
 function Logo() {
   return (
     <a href="#top" className="flex items-center gap-2.5">
-      <span className="relative flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-brand-400 shadow-lg shadow-brand-400/20">
-        <svg className="h-5 w-5 text-ink-950" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d={TRUCK_PATH} />
-        </svg>
+      <span className="relative flex h-11 w-11 flex-shrink-0">
+        <img src="/logo-mark.png" alt="" aria-hidden="true" className="h-11 w-11" />
         <span className="absolute -right-0.5 -top-0.5 flex h-2.5 w-2.5">
           <span className="animate-ping-slow absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
           <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-ink-950" />
@@ -340,11 +338,7 @@ export function Login() {
               className="mx-auto w-full max-w-sm scroll-mt-24 rounded-3xl border border-white/10 bg-ink-900/80 p-8 shadow-2xl shadow-black/60 backdrop-blur-xl"
             >
               <div className="mb-6">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-400">
-                  <svg className="h-6 w-6 text-ink-950" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d={TRUCK_PATH} />
-                  </svg>
-                </div>
+                <img src="/logo-mark.png" alt="" aria-hidden="true" className="mb-4 h-16 w-16" />
                 <h2 className="text-2xl font-black uppercase tracking-tight text-white">Iniciar sesión</h2>
                 <p className="mt-1 text-sm text-zinc-400">Con tu cuenta de administrador o de conductor</p>
               </div>
