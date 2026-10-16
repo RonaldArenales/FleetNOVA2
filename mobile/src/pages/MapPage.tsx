@@ -64,7 +64,7 @@ export function MapPage() {
                 plate={meQuery.data.vehicle.plate}
               />
             </div>
-            <div className="border-t border-gray-200 bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))] text-sm text-gray-600">
+            <div className="border-t border-white/10 bg-ink-900 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] text-sm text-zinc-400">
               Velocidad: <span className="font-semibold">{statusQuery.data.gps.speedKph.toFixed(0)} km/h</span> · Actualizado:{' '}
               {formatDateTime(statusQuery.data.gps.timestamp)}
             </div>

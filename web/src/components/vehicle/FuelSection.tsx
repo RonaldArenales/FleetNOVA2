@@ -62,13 +62,13 @@ export function FuelSection({ vehicleId }: { vehicleId: string }) {
         {consumptionQuery.isLoading && <LoadingState label="Calculando consumo..." />}
         {consumptionQuery.isError && <ErrorState error={consumptionQuery.error} />}
         {consumptionQuery.data && 'litersPer100Km' in consumptionQuery.data && consumptionQuery.data.litersPer100Km != null && (
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-zinc-200">
             Consumo estimado:{' '}
-            <span className="font-semibold text-gray-900">{consumptionQuery.data.litersPer100Km.toFixed(2)} L/100km</span>
+            <span className="font-semibold text-white">{consumptionQuery.data.litersPer100Km.toFixed(2)} L/100km</span>
           </p>
         )}
         {consumptionQuery.data && 'message' in consumptionQuery.data && (
-          <p className="text-sm text-gray-500">{consumptionQuery.data.message}</p>
+          <p className="text-sm text-zinc-400">{consumptionQuery.data.message}</p>
         )}
       </div>
 
@@ -78,7 +78,7 @@ export function FuelSection({ vehicleId }: { vehicleId: string }) {
       {logsQuery.data && logsQuery.data.length > 0 && (
         <div className="mb-4 overflow-x-auto">
         <table className="w-full text-left text-sm">
-          <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+          <thead className="bg-white/[0.03] text-[11px] uppercase tracking-wider text-zinc-500">
             <tr>
               <th className="px-3 py-2">Fecha</th>
               <th className="px-3 py-2">Litros</th>
@@ -86,13 +86,13 @@ export function FuelSection({ vehicleId }: { vehicleId: string }) {
               <th className="px-3 py-2">Odómetro</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-white/5">
             {logsQuery.data.map((log) => (
               <tr key={log.id}>
-                <td className="px-3 py-2 text-gray-600">{formatDate(log.timestamp)}</td>
-                <td className="px-3 py-2 text-gray-600">{log.litersAdded} L</td>
-                <td className="px-3 py-2 text-gray-600">{log.cost != null ? `$${log.cost.toFixed(2)}` : '—'}</td>
-                <td className="px-3 py-2 text-gray-600">{log.odometerAtFill.toLocaleString('es')} km</td>
+                <td className="px-3 py-2 text-zinc-400">{formatDate(log.timestamp)}</td>
+                <td className="px-3 py-2 text-zinc-400">{log.litersAdded} L</td>
+                <td className="px-3 py-2 text-zinc-400">{log.cost != null ? `$${log.cost.toFixed(2)}` : '—'}</td>
+                <td className="px-3 py-2 text-zinc-400">{log.odometerAtFill.toLocaleString('es')} km</td>
               </tr>
             ))}
           </tbody>
@@ -108,20 +108,20 @@ export function FuelSection({ vehicleId }: { vehicleId: string }) {
             odometerAtFill: Number(values.odometerAtFill),
           }),
         )}
-        className="grid grid-cols-1 gap-3 border-t border-gray-100 pt-4 sm:grid-cols-4"
+        className="grid grid-cols-1 gap-3 border-t border-white/5 pt-4 sm:grid-cols-4"
       >
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-600">Litros</label>
+          <label className="mb-1 block text-xs font-medium text-zinc-400">Litros</label>
           <input
             type="number"
             step="0.01"
             className="field-input w-full"
             {...register('litersAdded', { required: true, valueAsNumber: true, min: 0.01 })}
           />
-          {errors.litersAdded && <p className="mt-1 text-xs text-red-600">Requerido</p>}
+          {errors.litersAdded && <p className="mt-1 text-xs text-red-400">Requerido</p>}
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-600">Costo (opcional)</label>
+          <label className="mb-1 block text-xs font-medium text-zinc-400">Costo (opcional)</label>
           <input
             type="number"
             step="0.01"
@@ -130,13 +130,13 @@ export function FuelSection({ vehicleId }: { vehicleId: string }) {
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-600">Odómetro</label>
+          <label className="mb-1 block text-xs font-medium text-zinc-400">Odómetro</label>
           <input
             type="number"
             className="field-input w-full"
             {...register('odometerAtFill', { required: true, valueAsNumber: true, min: 0 })}
           />
-          {errors.odometerAtFill && <p className="mt-1 text-xs text-red-600">Requerido</p>}
+          {errors.odometerAtFill && <p className="mt-1 text-xs text-red-400">Requerido</p>}
         </div>
         <div className="flex items-end">
           <button
@@ -148,7 +148,7 @@ export function FuelSection({ vehicleId }: { vehicleId: string }) {
           </button>
         </div>
       </form>
-      {formError && <p className="mt-2 text-sm text-red-600">{formError}</p>}
+      {formError && <p className="mt-2 text-sm text-red-400">{formError}</p>}
     </Section>
   );
 }

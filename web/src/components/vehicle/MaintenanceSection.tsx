@@ -102,14 +102,14 @@ export function MaintenanceSection({ vehicleId }: { vehicleId: string }) {
     <Section title="Mantenimiento">
       <div className="space-y-8">
         <div>
-          <h3 className="mb-3 text-sm font-semibold text-gray-700">Mantenimientos programados</h3>
+          <h3 className="mb-3 text-sm font-semibold text-zinc-200">Mantenimientos programados</h3>
           {schedulesQuery.isLoading && <LoadingState label="Cargando..." />}
           {schedulesQuery.isError && <ErrorState error={schedulesQuery.error} retry={() => schedulesQuery.refetch()} />}
           {schedulesQuery.data && schedulesQuery.data.length === 0 && <EmptyState>Sin mantenimientos programados.</EmptyState>}
           {schedulesQuery.data && schedulesQuery.data.length > 0 && (
             <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+              <thead className="bg-white/[0.03] text-[11px] uppercase tracking-wider text-zinc-500">
                 <tr>
                   <th className="px-3 py-2">Tipo</th>
                   <th className="px-3 py-2">Fecha límite</th>
@@ -118,12 +118,12 @@ export function MaintenanceSection({ vehicleId }: { vehicleId: string }) {
                   <th className="px-3 py-2 text-right">Acción</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-white/5">
                 {schedulesQuery.data.map((s) => (
                   <tr key={s.id}>
-                    <td className="px-3 py-2 text-gray-700">{s.type}</td>
-                    <td className="px-3 py-2 text-gray-600">{formatDate(s.dueDate)}</td>
-                    <td className="px-3 py-2 text-gray-600">
+                    <td className="px-3 py-2 text-zinc-200">{s.type}</td>
+                    <td className="px-3 py-2 text-zinc-400">{formatDate(s.dueDate)}</td>
+                    <td className="px-3 py-2 text-zinc-400">
                       {s.dueOdometerKm != null ? `${s.dueOdometerKm.toLocaleString('es')} km` : '—'}
                     </td>
                     <td className="px-3 py-2">
@@ -139,7 +139,7 @@ export function MaintenanceSection({ vehicleId }: { vehicleId: string }) {
                           Marcar como realizado
                         </button>
                       ) : (
-                        <span className="text-gray-300">—</span>
+                        <span className="text-zinc-600">—</span>
                       )}
                     </td>
                   </tr>
@@ -151,21 +151,21 @@ export function MaintenanceSection({ vehicleId }: { vehicleId: string }) {
 
           <form
             onSubmit={scheduleForm.handleSubmit((values) => createScheduleMutation.mutate(values))}
-            className="mt-3 grid grid-cols-1 gap-3 border-t border-gray-100 pt-4 sm:grid-cols-4"
+            className="mt-3 grid grid-cols-1 gap-3 border-t border-white/5 pt-4 sm:grid-cols-4"
           >
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-600">Tipo</label>
+              <label className="mb-1 block text-xs font-medium text-zinc-400">Tipo</label>
               <input
                 className="field-input w-full"
                 {...scheduleForm.register('type', { required: true })}
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-600">Fecha límite</label>
+              <label className="mb-1 block text-xs font-medium text-zinc-400">Fecha límite</label>
               <input type="date" className="field-input w-full" {...scheduleForm.register('dueDate')} />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-600">Odómetro límite</label>
+              <label className="mb-1 block text-xs font-medium text-zinc-400">Odómetro límite</label>
               <input
                 type="number"
                 className="field-input w-full"
@@ -182,22 +182,22 @@ export function MaintenanceSection({ vehicleId }: { vehicleId: string }) {
               </button>
             </div>
             <div className="sm:col-span-4">
-              <label className="mb-1 block text-xs font-medium text-gray-600">Descripción (opcional)</label>
+              <label className="mb-1 block text-xs font-medium text-zinc-400">Descripción (opcional)</label>
               <input className="field-input w-full" {...scheduleForm.register('description')} />
             </div>
           </form>
-          {scheduleError && <p className="mt-2 text-sm text-red-600">{scheduleError}</p>}
+          {scheduleError && <p className="mt-2 text-sm text-red-400">{scheduleError}</p>}
         </div>
 
         <div>
-          <h3 className="mb-3 text-sm font-semibold text-gray-700">Historial de mantenimientos realizados</h3>
+          <h3 className="mb-3 text-sm font-semibold text-zinc-200">Historial de mantenimientos realizados</h3>
           {recordsQuery.isLoading && <LoadingState label="Cargando..." />}
           {recordsQuery.isError && <ErrorState error={recordsQuery.error} retry={() => recordsQuery.refetch()} />}
           {recordsQuery.data && recordsQuery.data.length === 0 && <EmptyState>Sin mantenimientos registrados.</EmptyState>}
           {recordsQuery.data && recordsQuery.data.length > 0 && (
             <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+              <thead className="bg-white/[0.03] text-[11px] uppercase tracking-wider text-zinc-500">
                 <tr>
                   <th className="px-3 py-2">Tipo</th>
                   <th className="px-3 py-2">Descripción</th>
@@ -206,14 +206,14 @@ export function MaintenanceSection({ vehicleId }: { vehicleId: string }) {
                   <th className="px-3 py-2">Fecha</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-white/5">
                 {recordsQuery.data.map((r) => (
                   <tr key={r.id}>
-                    <td className="px-3 py-2 text-gray-700">{r.type}</td>
-                    <td className="px-3 py-2 text-gray-600">{r.description ?? '—'}</td>
-                    <td className="px-3 py-2 text-gray-600">{r.cost != null ? `$${r.cost.toFixed(2)}` : '—'}</td>
-                    <td className="px-3 py-2 text-gray-600">{r.odometerKm.toLocaleString('es')} km</td>
-                    <td className="px-3 py-2 text-gray-600">{formatDate(r.performedAt)}</td>
+                    <td className="px-3 py-2 text-zinc-200">{r.type}</td>
+                    <td className="px-3 py-2 text-zinc-400">{r.description ?? '—'}</td>
+                    <td className="px-3 py-2 text-zinc-400">{r.cost != null ? `$${r.cost.toFixed(2)}` : '—'}</td>
+                    <td className="px-3 py-2 text-zinc-400">{r.odometerKm.toLocaleString('es')} km</td>
+                    <td className="px-3 py-2 text-zinc-400">{formatDate(r.performedAt)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -223,17 +223,17 @@ export function MaintenanceSection({ vehicleId }: { vehicleId: string }) {
 
           <form
             onSubmit={recordForm.handleSubmit((values) => createRecordMutation.mutate(values))}
-            className="mt-3 grid grid-cols-1 gap-3 border-t border-gray-100 pt-4 sm:grid-cols-4"
+            className="mt-3 grid grid-cols-1 gap-3 border-t border-white/5 pt-4 sm:grid-cols-4"
           >
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-600">Tipo</label>
+              <label className="mb-1 block text-xs font-medium text-zinc-400">Tipo</label>
               <input
                 className="field-input w-full"
                 {...recordForm.register('type', { required: true })}
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-600">Costo (opcional)</label>
+              <label className="mb-1 block text-xs font-medium text-zinc-400">Costo (opcional)</label>
               <input
                 type="number"
                 step="0.01"
@@ -242,7 +242,7 @@ export function MaintenanceSection({ vehicleId }: { vehicleId: string }) {
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-600">Odómetro</label>
+              <label className="mb-1 block text-xs font-medium text-zinc-400">Odómetro</label>
               <input
                 type="number"
                 className="field-input w-full"
@@ -259,11 +259,11 @@ export function MaintenanceSection({ vehicleId }: { vehicleId: string }) {
               </button>
             </div>
             <div className="sm:col-span-4">
-              <label className="mb-1 block text-xs font-medium text-gray-600">Descripción (opcional)</label>
+              <label className="mb-1 block text-xs font-medium text-zinc-400">Descripción (opcional)</label>
               <input className="field-input w-full" {...recordForm.register('description')} />
             </div>
           </form>
-          {recordError && <p className="mt-2 text-sm text-red-600">{recordError}</p>}
+          {recordError && <p className="mt-2 text-sm text-red-400">{recordError}</p>}
         </div>
       </div>
     </Section>

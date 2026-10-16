@@ -64,8 +64,8 @@ export function Alerts() {
           </svg>
         </div>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Alertas</h1>
-          <p className="text-sm text-gray-500">Notificaciones generadas por la flota</p>
+          <h1 className="text-3xl font-black uppercase tracking-tight text-white">Alertas</h1>
+          <p className="text-sm text-zinc-400">Notificaciones generadas por la flota</p>
         </div>
       </div>
 
@@ -82,7 +82,7 @@ export function Alerts() {
             </option>
           ))}
         </select>
-        <label className="flex items-center gap-2 text-sm text-gray-600">
+        <label className="flex items-center gap-2 text-sm text-zinc-400">
           <input type="checkbox" checked={onlyUnread} onChange={(e) => setOnlyUnread(e.target.checked)} />
           Solo no leídas
         </label>
@@ -103,7 +103,7 @@ export function Alerts() {
         {alertsQuery.data && alertsQuery.data.length > 0 && (
           <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+            <thead className="bg-white/[0.03] text-[11px] uppercase tracking-wider text-zinc-500">
               <tr>
                 <th className="px-4 py-3">Nivel</th>
                 <th className="px-4 py-3">Mensaje</th>
@@ -113,16 +113,16 @@ export function Alerts() {
                 <th className="px-4 py-3 text-right">Acción</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-white/5">
               {alertsQuery.data.map((alert) => (
-                <tr key={alert.id} className={alert.read ? '' : 'bg-indigo-50/50'}>
+                <tr key={alert.id} className={alert.read ? '' : 'bg-brand-400/[0.04]'}>
                   <td className="px-4 py-3">
                     <AlertLevelBadge level={alert.level} />
                   </td>
-                  <td className="px-4 py-3 text-gray-700">{alert.message}</td>
-                  <td className="px-4 py-3 text-gray-600">{plateById.get(alert.vehicleId) ?? alert.vehicleId}</td>
-                  <td className="px-4 py-3 text-gray-500">{formatDateTime(alert.createdAt)}</td>
-                  <td className="px-4 py-3 text-gray-600">{alert.read ? 'Leída' : 'Sin leer'}</td>
+                  <td className="px-4 py-3 text-zinc-200">{alert.message}</td>
+                  <td className="px-4 py-3 text-zinc-400">{plateById.get(alert.vehicleId) ?? alert.vehicleId}</td>
+                  <td className="px-4 py-3 text-zinc-400">{formatDateTime(alert.createdAt)}</td>
+                  <td className="px-4 py-3 text-zinc-400">{alert.read ? 'Leída' : 'Sin leer'}</td>
                   <td className="px-4 py-3 text-right">
                     {!alert.read && (
                       <button

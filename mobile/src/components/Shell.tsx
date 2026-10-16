@@ -41,12 +41,12 @@ const tabs = [
 
 export function Shell() {
   return (
-    <div className="min-h-screen bg-gray-200 sm:flex sm:items-center sm:justify-center sm:p-6">
-      <div className="relative flex min-h-screen w-full flex-col bg-gray-100 sm:min-h-[min(50rem,calc(100vh-3rem))] sm:max-w-md sm:overflow-hidden sm:rounded-[2rem] sm:border sm:border-gray-300 sm:shadow-2xl">
+    <div className="min-h-screen bg-black sm:flex sm:items-center sm:justify-center sm:p-6">
+      <div className="relative flex min-h-screen w-full flex-col bg-ink-950 sm:min-h-[min(50rem,calc(100vh-3rem))] sm:max-w-md sm:overflow-hidden sm:rounded-[2rem] sm:border sm:border-white/10 sm:shadow-2xl sm:shadow-black">
         <main className="flex-1 overflow-y-auto pb-20">
           <Outlet />
         </main>
-        <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-gray-200 bg-white/95 backdrop-blur pb-[env(safe-area-inset-bottom)] sm:absolute">
+        <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-white/5 bg-ink-950/90 backdrop-blur-md pb-[env(safe-area-inset-bottom)] sm:absolute">
           <div className="mx-auto flex max-w-md">
             {tabs.map((tab) => (
               <NavLink
@@ -54,15 +54,25 @@ export function Shell() {
                 to={tab.to}
                 end={tab.end}
                 className={({ isActive }) =>
-                  `flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium transition-colors ${
-                    isActive ? 'text-indigo-600' : 'text-gray-400'
+                  `flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-medium transition-colors ${
+                    isActive ? 'text-brand-400' : 'text-zinc-500'
                   }`
                 }
               >
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                  {tab.icon}
-                </svg>
-                {tab.label}
+                {({ isActive }) => (
+                  <>
+                    <span
+                      className={`flex h-8 w-12 items-center justify-center rounded-full transition-colors ${
+                        isActive ? 'bg-brand-400 text-ink-950' : ''
+                      }`}
+                    >
+                      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                        {tab.icon}
+                      </svg>
+                    </span>
+                    {tab.label}
+                  </>
+                )}
               </NavLink>
             ))}
           </div>

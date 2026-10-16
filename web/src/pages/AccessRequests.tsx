@@ -45,8 +45,8 @@ export function AccessRequests() {
           </svg>
         </div>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Solicitudes de acceso</h1>
-          <p className="text-sm text-gray-500">Personas que pidieron acceso desde la página principal</p>
+          <h1 className="text-3xl font-black uppercase tracking-tight text-white">Solicitudes de acceso</h1>
+          <p className="text-sm text-zinc-400">Personas que pidieron acceso desde la página principal</p>
         </div>
       </div>
 
@@ -65,7 +65,7 @@ export function AccessRequests() {
         {requestsQuery.data && requestsQuery.data.length > 0 && (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+              <thead className="bg-white/[0.03] text-[11px] uppercase tracking-wider text-zinc-500">
                 <tr>
                   <th className="px-4 py-3">Nombre</th>
                   <th className="px-4 py-3">Teléfono</th>
@@ -75,22 +75,22 @@ export function AccessRequests() {
                   <th className="px-4 py-3 text-right">Acción</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-white/5">
                 {requestsQuery.data.map((r) => (
-                  <tr key={r.id} className={r.reviewed ? '' : 'bg-indigo-50/50'}>
-                    <td className="px-4 py-3 font-medium text-gray-800">
+                  <tr key={r.id} className={r.reviewed ? '' : 'bg-brand-400/[0.04]'}>
+                    <td className="px-4 py-3 font-medium text-zinc-100">
                       {r.firstName} {r.lastName}
                     </td>
-                    <td className="px-4 py-3 text-gray-600">{r.phone}</td>
-                    <td className="px-4 py-3 text-gray-600">{r.email}</td>
-                    <td className="px-4 py-3 text-gray-500">{formatDateTime(r.createdAt)}</td>
+                    <td className="px-4 py-3 text-zinc-400">{r.phone}</td>
+                    <td className="px-4 py-3 text-zinc-400">{r.email}</td>
+                    <td className="px-4 py-3 text-zinc-400">{formatDateTime(r.createdAt)}</td>
                     <td className="px-4 py-3">
                       {r.reviewed ? (
-                        <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                        <span className="inline-flex items-center rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-300">
                           Atendida
                         </span>
                       ) : (
-                        <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700">
+                        <span className="inline-flex items-center rounded-full border border-amber-500/25 bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-300">
                           Pendiente
                         </span>
                       )}

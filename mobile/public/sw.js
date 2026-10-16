@@ -1,4 +1,4 @@
-const CACHE_NAME = "fleetnova-conductor-v1";
+const CACHE_NAME = "fleetnova-conductor-v2";
 const APP_SHELL = ["/", "/index.html", "/icon.svg", "/manifest.json"];
 
 self.addEventListener("install", (event) => {

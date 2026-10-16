@@ -12,9 +12,9 @@ function formatDateTime(value: string) {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border border-gray-100 p-3">
-      <p className="text-xs font-medium uppercase text-gray-400">{label}</p>
-      <p className="mt-1 text-lg font-semibold text-gray-800">{value}</p>
+    <div className="rounded-xl border border-white/5 bg-ink-950/60 p-4">
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">{label}</p>
+      <p className="mt-1 font-display text-2xl font-black text-white">{value}</p>
     </div>
   );
 }
@@ -35,14 +35,14 @@ export function MechanicalSection({ obd }: { obd: ObdData | null }) {
           <div className="flex flex-wrap items-center gap-4">
             <span
               className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${
-                obd.engineOn ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-700'
+                obd.engineOn ? 'bg-green-500/15 text-green-200' : 'bg-white/10 text-zinc-200'
               }`}
             >
               Motor {obd.engineOn ? 'encendido' : 'apagado'}
             </span>
             <span
               className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${
-                obd.transmissionOk ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                obd.transmissionOk ? 'bg-green-500/15 text-green-200' : 'bg-red-500/15 text-red-200'
               }`}
             >
               Transmisión {obd.transmissionOk ? 'correcta' : 'con problemas'}
@@ -50,13 +50,13 @@ export function MechanicalSection({ obd }: { obd: ObdData | null }) {
           </div>
 
           <div>
-            <p className="mb-2 text-sm font-medium text-gray-700">Códigos de falla</p>
+            <p className="mb-2 text-sm font-medium text-zinc-200">Códigos de falla</p>
             {obd.faultCodes.length === 0 ? (
-              <p className="text-sm text-gray-500">Sin códigos de falla activos.</p>
+              <p className="text-sm text-zinc-400">Sin códigos de falla activos.</p>
             ) : (
               <div className="flex flex-wrap gap-2">
                 {obd.faultCodes.map((code) => (
-                  <span key={code} className="rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+                  <span key={code} className="rounded-full bg-red-500/15 px-2.5 py-0.5 text-xs font-medium text-red-200">
                     {code}
                   </span>
                 ))}
@@ -64,7 +64,7 @@ export function MechanicalSection({ obd }: { obd: ObdData | null }) {
             )}
           </div>
 
-          <p className="text-xs text-gray-400">Última actualización: {formatDateTime(obd.timestamp)}</p>
+          <p className="text-xs text-zinc-500">Última actualización: {formatDateTime(obd.timestamp)}</p>
         </div>
       )}
     </Section>

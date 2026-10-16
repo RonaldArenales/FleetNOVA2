@@ -48,15 +48,15 @@ export function Handoff() {
   }, [searchParams]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-900 px-6 text-center">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-ink-950 px-6 text-center">
       {!error ? (
         <>
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-white/20 border-t-white" />
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-white/10 border-t-brand-400" />
           <p className="text-sm text-white/70">Iniciando sesión...</p>
         </>
       ) : (
-        <div className="w-full max-w-sm rounded-2xl bg-white p-7 shadow-2xl shadow-black/40">
-          <p className="text-sm text-red-600">{error}</p>
+        <div className="w-full max-w-sm rounded-3xl border border-white/10 bg-ink-900 p-7 shadow-2xl shadow-black/60">
+          <p className="text-sm text-red-400">{error}</p>
           <Link to="/login" className="btn-primary mt-4 inline-block w-full text-center">
             Ir a iniciar sesión
           </Link>

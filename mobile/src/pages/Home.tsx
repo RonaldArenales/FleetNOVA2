@@ -55,19 +55,27 @@ export function Home() {
 
         {meQuery.data?.vehicle && (
           <>
-            <div className="card p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-2xl font-bold text-gray-800">{meQuery.data.vehicle.plate}</p>
-                  <p className="text-sm text-gray-500">
-                    {meQuery.data.vehicle.brand} {meQuery.data.vehicle.model} · {meQuery.data.vehicle.year}
-                  </p>
+            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[url('/img/hero-night-highway.jpg')] bg-cover bg-center">
+              <div className="bg-gradient-to-t from-ink-950 via-ink-950/75 to-ink-950/30 p-5 pt-16">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="eyebrow">Tu vehículo</p>
+                    <p className="mt-1 font-display text-4xl font-black uppercase leading-none tracking-tight text-white">
+                      {meQuery.data.vehicle.plate}
+                    </p>
+                    <p className="mt-2 text-sm text-zinc-300">
+                      {meQuery.data.vehicle.brand} {meQuery.data.vehicle.model} · {meQuery.data.vehicle.year}
+                    </p>
+                  </div>
+                  <VehicleStatusBadge status={meQuery.data.vehicle.status} />
                 </div>
-                <VehicleStatusBadge status={meQuery.data.vehicle.status} />
+                <div className="mt-5 inline-flex items-baseline gap-2 rounded-2xl border border-white/10 bg-ink-950/60 px-4 py-2.5 backdrop-blur">
+                  <span className="font-display text-2xl font-black text-brand-400">
+                    {meQuery.data.vehicle.odometerKm.toLocaleString('es')}
+                  </span>
+                  <span className="text-xs uppercase tracking-wider text-zinc-400">km recorridos</span>
+                </div>
               </div>
-              <p className="mt-3 text-sm text-gray-600">
-                Odómetro: <span className="font-semibold">{meQuery.data.vehicle.odometerKm.toLocaleString('es')} km</span>
-              </p>
             </div>
 
             {statusQuery.isLoading && <LoadingState label="Cargando estado..." />}
@@ -75,7 +83,7 @@ export function Home() {
 
             {statusQuery.data && (
               <>
-                <Link to="/mapa" className="card flex items-start gap-3 p-4 active:bg-gray-50">
+                <Link to="/mapa" className="card flex items-start gap-3 p-4 active:bg-white/[0.03]">
                   <div className="icon-badge mt-0.5">
                     <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                       <path
@@ -86,17 +94,17 @@ export function Home() {
                     </svg>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-400">Ubicación</p>
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-zinc-500">Ubicación</p>
                     {statusQuery.data.gps ? (
                       <>
-                        <p className="text-sm text-gray-700">
+                        <p className="text-sm text-zinc-200">
                           Velocidad: <span className="font-semibold">{statusQuery.data.gps.speedKph.toFixed(0)} km/h</span>
                         </p>
-                        <p className="text-xs text-gray-400">Actualizado: {formatDateTime(statusQuery.data.gps.timestamp)}</p>
-                        <p className="mt-2 text-xs font-medium text-indigo-600">Ver en el mapa →</p>
+                        <p className="text-xs text-zinc-500">Actualizado: {formatDateTime(statusQuery.data.gps.timestamp)}</p>
+                        <p className="mt-2 text-xs font-medium text-brand-400">Ver en el mapa →</p>
                       </>
                     ) : (
-                      <p className="text-sm text-gray-500">Sin datos de ubicación todavía.</p>
+                      <p className="text-sm text-zinc-400">Sin datos de ubicación todavía.</p>
                     )}
                   </div>
                 </Link>
@@ -112,43 +120,43 @@ export function Home() {
                         />
                       </svg>
                     </div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Estado mecánico</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Estado mecánico</p>
                   </div>
                   {statusQuery.data.obd ? (
-                    <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <p className="text-gray-400">RPM</p>
-                        <p className="font-semibold text-gray-800">{statusQuery.data.obd.rpm}</p>
+                        <p className="text-[11px] uppercase tracking-wider text-zinc-500">RPM</p>
+                        <p className="mt-0.5 font-display text-xl font-black text-white">{statusQuery.data.obd.rpm}</p>
                       </div>
                       <div>
-                        <p className="text-gray-400">Temp. motor</p>
-                        <p className="font-semibold text-gray-800">{statusQuery.data.obd.engineTempC.toFixed(1)} °C</p>
+                        <p className="text-[11px] uppercase tracking-wider text-zinc-500">Temp. motor</p>
+                        <p className="mt-0.5 font-display text-xl font-black text-white">{statusQuery.data.obd.engineTempC.toFixed(1)} °C</p>
                       </div>
                       <div>
-                        <p className="text-gray-400">Batería</p>
-                        <p className="font-semibold text-gray-800">{statusQuery.data.obd.batteryVoltage.toFixed(1)} V</p>
+                        <p className="text-[11px] uppercase tracking-wider text-zinc-500">Batería</p>
+                        <p className="mt-0.5 font-display text-xl font-black text-white">{statusQuery.data.obd.batteryVoltage.toFixed(1)} V</p>
                       </div>
                       <div>
-                        <p className="text-gray-400">Motor</p>
-                        <p className="font-semibold text-gray-800">{statusQuery.data.obd.engineOn ? 'Encendido' : 'Apagado'}</p>
+                        <p className="text-[11px] uppercase tracking-wider text-zinc-500">Motor</p>
+                        <p className="mt-0.5 font-display text-xl font-black text-white">{statusQuery.data.obd.engineOn ? 'Encendido' : 'Apagado'}</p>
                       </div>
                       {statusQuery.data.obd.faultCodes.length > 0 && (
                         <div className="col-span-2">
-                          <p className="text-gray-400">Códigos de falla</p>
-                          <p className="font-semibold text-rose-600">{statusQuery.data.obd.faultCodes.join(', ')}</p>
+                          <p className="text-[11px] uppercase tracking-wider text-zinc-500">Códigos de falla</p>
+                          <p className="font-semibold text-rose-400">{statusQuery.data.obd.faultCodes.join(', ')}</p>
                         </div>
                       )}
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500">Sin datos del motor todavía.</p>
+                    <p className="text-sm text-zinc-400">Sin datos del motor todavía.</p>
                   )}
                 </div>
               </>
             )}
 
-            <Link to="/recorridos" className="card flex items-center justify-between p-4 active:bg-gray-50">
-              <span className="text-sm font-medium text-gray-700">Historial de recorridos</span>
-              <span className="text-indigo-600">→</span>
+            <Link to="/recorridos" className="card flex items-center justify-between p-4 active:bg-white/[0.03]">
+              <span className="text-sm font-medium text-zinc-200">Historial de recorridos</span>
+              <span className="text-brand-400">→</span>
             </Link>
           </>
         )}

@@ -32,13 +32,13 @@ export function Alerts() {
         {query.isError && <ErrorState error={query.error} retry={() => query.refetch()} />}
         {query.data && query.data.length === 0 && <EmptyState>No hay alertas para tu vehículo.</EmptyState>}
         {query.data?.map((alert) => (
-          <div key={alert.id} className={`card p-4 ${alert.read ? '' : 'ring-1 ring-indigo-200'}`}>
+          <div key={alert.id} className={`card p-4 ${alert.read ? '' : 'ring-1 ring-brand-400/40'}`}>
             <div className="flex items-center justify-between gap-2">
               <AlertLevelBadge level={alert.level} />
-              {!alert.read && <span className="h-2 w-2 rounded-full bg-indigo-500" aria-label="Sin leer" />}
+              {!alert.read && <span className="h-2 w-2 rounded-full bg-brand-400" aria-label="Sin leer" />}
             </div>
-            <p className="mt-2 text-sm text-gray-700">{alert.message}</p>
-            <p className="mt-1 text-xs text-gray-400">{formatDateTime(alert.createdAt)}</p>
+            <p className="mt-2 text-sm text-zinc-200">{alert.message}</p>
+            <p className="mt-1 text-xs text-zinc-500">{formatDateTime(alert.createdAt)}</p>
           </div>
         ))}
       </div>

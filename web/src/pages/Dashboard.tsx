@@ -67,11 +67,11 @@ function IconInbox() {
 }
 
 const statAccents = {
-  indigo: 'border-indigo-100 bg-indigo-50 text-indigo-600',
-  green: 'border-emerald-100 bg-emerald-50 text-emerald-600',
-  amber: 'border-amber-100 bg-amber-50 text-amber-600',
-  red: 'border-rose-100 bg-rose-50 text-rose-600',
-  cyan: 'border-cyan-100 bg-cyan-50 text-cyan-600',
+  brand: 'border-brand-400/25 bg-brand-400/10 text-brand-400',
+  green: 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400',
+  amber: 'border-amber-500/20 bg-amber-500/10 text-amber-400',
+  red: 'border-rose-500/20 bg-rose-500/10 text-rose-400',
+  cyan: 'border-cyan-500/20 bg-cyan-500/10 text-cyan-400',
 } as const;
 
 function StatCard({
@@ -86,14 +86,14 @@ function StatCard({
   accent: keyof typeof statAccents;
 }) {
   return (
-    <div className="card flex items-center gap-4 p-5">
-      <div className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border-2 ${statAccents[accent]}`}>
-        {icon}
+    <div className="card group flex flex-col justify-between gap-6 p-6 transition-colors hover:border-brand-400/30">
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">{label}</p>
+        <div className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border ${statAccents[accent]}`}>
+          {icon}
+        </div>
       </div>
-      <div className="min-w-0">
-        <p className="text-sm font-medium text-gray-500">{label}</p>
-        <p className="mt-0.5 text-2xl font-bold leading-tight text-gray-900">{value}</p>
-      </div>
+      <p className="font-display text-4xl font-black leading-none tracking-tight text-white">{value}</p>
     </div>
   );
 }
@@ -117,19 +117,23 @@ export function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <div className="icon-badge">
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75"
-            />
-          </svg>
-        </div>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Dashboard</h1>
-          <p className="text-sm text-gray-500">Resumen general de la flota</p>
+      <div className="relative overflow-hidden rounded-3xl border border-white/5 bg-[url('/img/hero-night-highway.jpg')] bg-cover bg-center">
+        <div className="bg-gradient-to-r from-ink-950 via-ink-950/85 to-ink-950/20 px-6 py-10 sm:px-10 sm:py-14">
+          <p className="eyebrow">Resumen general de la flota</p>
+          <h1 className="mt-3 max-w-xl text-4xl font-black uppercase leading-[0.95] tracking-tight text-white sm:text-5xl">
+            Tu flota, <span className="text-brand-400">en movimiento</span>
+          </h1>
+          <p className="mt-4 max-w-md text-sm text-zinc-300">
+            Estado de los vehículos, alertas y mantenimientos de toda la operación en un solo lugar.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link to="/vehiculos" className="btn-primary">
+              Ver vehículos →
+            </Link>
+            <Link to="/reportes" className="btn-secondary">
+              Reportes
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -137,7 +141,7 @@ export function Dashboard() {
       {summaryQuery.isError && <ErrorState error={summaryQuery.error} retry={() => summaryQuery.refetch()} />}
       {summaryQuery.data && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <StatCard label="Vehículos activos" value={summaryQuery.data.activeVehicles} icon={<IconTruck />} accent="indigo" />
+          <StatCard label="Vehículos activos" value={summaryQuery.data.activeVehicles} icon={<IconTruck />} accent="brand" />
           <StatCard label="Total de vehículos" value={summaryQuery.data.totalVehicles} icon={<IconGrid />} accent="cyan" />
           <StatCard label="Alertas sin leer" value={summaryQuery.data.unreadAlerts} icon={<IconBell />} accent="red" />
           <StatCard label="Mantenimientos próximos" value={summaryQuery.data.maintenancesDue} icon={<IconWrench />} accent="amber" />
@@ -155,14 +159,14 @@ export function Dashboard() {
             label="Solicitudes de acceso pendientes"
             value={summaryQuery.data.pendingAccessRequests}
             icon={<IconInbox />}
-            accent="indigo"
+            accent="brand"
           />
         </div>
       )}
 
-      <div className="card p-5">
+      <div className="card p-6">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-800">Alertas recientes sin leer</h2>
+          <h2 className="text-lg font-black uppercase tracking-tight text-white">Alertas recientes sin leer</h2>
           <Link to="/alertas" className="link-action text-sm">
             Ver todas
           </Link>
@@ -171,17 +175,17 @@ export function Dashboard() {
         {alertsQuery.isLoading && <LoadingState label="Cargando alertas..." />}
         {alertsQuery.isError && <ErrorState error={alertsQuery.error} retry={() => alertsQuery.refetch()} />}
         {alertsQuery.data && alertsQuery.data.length === 0 && (
-          <p className="py-4 text-center text-sm text-gray-500">No hay alertas sin leer.</p>
+          <p className="py-4 text-center text-sm text-zinc-400">No hay alertas sin leer.</p>
         )}
         {alertsQuery.data && alertsQuery.data.length > 0 && (
-          <ul className="divide-y divide-gray-100">
+          <ul className="divide-y divide-white/5">
             {alertsQuery.data.slice(0, 8).map((alert) => (
               <li key={alert.id} className="flex items-center justify-between gap-3 py-3">
                 <div className="flex items-center gap-3">
                   <AlertLevelBadge level={alert.level} />
-                  <span className="text-sm text-gray-700">{alert.message}</span>
+                  <span className="text-sm text-zinc-200">{alert.message}</span>
                 </div>
-                <span className="whitespace-nowrap text-xs text-gray-400">{formatDateTime(alert.createdAt)}</span>
+                <span className="whitespace-nowrap text-xs text-zinc-500">{formatDateTime(alert.createdAt)}</span>
               </li>
             ))}
           </ul>

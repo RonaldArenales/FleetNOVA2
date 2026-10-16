@@ -89,8 +89,8 @@ export function Vehicles() {
             </svg>
           </div>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">Vehículos</h1>
-            <p className="text-sm text-gray-500">Administra la flota de camiones</p>
+            <h1 className="text-3xl font-black uppercase tracking-tight text-white">Vehículos</h1>
+            <p className="text-sm text-zinc-400">Administra la flota de camiones</p>
           </div>
         </div>
         {canWrite && (
@@ -140,7 +140,7 @@ export function Vehicles() {
         {vehiclesQuery.data && vehiclesQuery.data.length > 0 && (
           <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+            <thead className="bg-white/[0.03] text-[11px] uppercase tracking-wider text-zinc-500">
               <tr>
                 <th className="px-4 py-3">Placa</th>
                 <th className="px-4 py-3">Marca / Modelo</th>
@@ -151,23 +151,23 @@ export function Vehicles() {
                 {canWrite && <th className="px-4 py-3 text-right">Acciones</th>}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-white/5">
               {vehiclesQuery.data.map((v) => (
                 <tr
                   key={v.id}
                   onClick={() => navigate(`/vehiculos/${v.id}`)}
-                  className="cursor-pointer hover:bg-gray-50"
+                  className="cursor-pointer hover:bg-white/[0.03]"
                 >
-                  <td className="px-4 py-3 font-medium text-gray-800">{v.plate}</td>
-                  <td className="px-4 py-3 text-gray-600">
+                  <td className="px-4 py-3 font-medium text-zinc-100">{v.plate}</td>
+                  <td className="px-4 py-3 text-zinc-400">
                     {v.brand} {v.model}
                   </td>
-                  <td className="px-4 py-3 text-gray-600">{v.year}</td>
+                  <td className="px-4 py-3 text-zinc-400">{v.year}</td>
                   <td className="px-4 py-3">
                     <VehicleStatusBadge status={v.status} />
                   </td>
-                  <td className="px-4 py-3 text-gray-600">{v.odometerKm.toLocaleString('es')} km</td>
-                  {isAdmin && <td className="px-4 py-3 text-gray-600">{v.owner?.name ?? '—'}</td>}
+                  <td className="px-4 py-3 text-zinc-400">{v.odometerKm.toLocaleString('es')} km</td>
+                  {isAdmin && <td className="px-4 py-3 text-zinc-400">{v.owner?.name ?? '—'}</td>}
                   {canWrite && (
                     <td className="px-4 py-3 text-right">
                       <button

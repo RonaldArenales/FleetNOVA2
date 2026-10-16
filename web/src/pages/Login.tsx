@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { useLocation } from 'react-router-dom';
 import { api, getApiErrorMessage, setStoredAuth } from '../lib/api';
@@ -154,20 +154,30 @@ const ROLES = [
   },
 ];
 
-function Logo({ dark = false }: { dark?: boolean }) {
+const TRUCK_PATH =
+  'M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.25h5.25M3 12h12.75';
+
+// Datos del hero: capacidades reales de la plataforma, no métricas de negocio.
+const HERO_STATS = [
+  { value: 'GPS', label: 'Ubicación de cada camión en tiempo real' },
+  { value: 'OBD-II', label: 'RPM, temperatura, batería y fallas del motor' },
+  { value: '24/7', label: 'Alertas automáticas ante fallas o riesgos' },
+];
+
+function Logo() {
   return (
     <a href="#top" className="flex items-center gap-2.5">
-      <span className="relative flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-indigo-600 shadow-sm shadow-indigo-600/30">
-        <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.25h5.25M3 12h12.75" />
+      <span className="relative flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-brand-400 shadow-lg shadow-brand-400/20">
+        <svg className="h-5 w-5 text-ink-950" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d={TRUCK_PATH} />
         </svg>
         <span className="absolute -right-0.5 -top-0.5 flex h-2.5 w-2.5">
           <span className="animate-ping-slow absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-          <span className={`relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ${dark ? 'ring-slate-900' : 'ring-white'}`} />
+          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-ink-950" />
         </span>
       </span>
-      <span className={`font-display text-lg font-extrabold tracking-tight ${dark ? 'text-white' : 'text-slate-900'}`}>
-        Fleet<span className="text-indigo-600">Nova</span>
+      <span className="font-display text-lg font-black uppercase tracking-tight text-white">
+        Fleet<span className="text-brand-400">Nova</span>
       </span>
     </a>
   );
@@ -175,23 +185,24 @@ function Logo({ dark = false }: { dark?: boolean }) {
 
 function NavBar() {
   return (
-    <header id="top" className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 lg:px-8">
+    <header id="top" className="sticky top-0 z-50 border-b border-white/5 bg-ink-950/80 backdrop-blur-md">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 lg:px-8">
         <Logo />
 
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden items-center gap-1 rounded-full border border-white/10 bg-white/[0.03] p-1 lg:flex">
           {NAV_LINKS.map((link) => (
-            <a key={link.href} href={link.href} className="text-sm font-medium text-gray-600 transition-colors hover:text-indigo-600">
+            <a
+              key={link.href}
+              href={link.href}
+              className="rounded-full px-4 py-1.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-brand-400 hover:text-ink-950"
+            >
               {link.label}
             </a>
           ))}
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <a
-            href="#solicitar-acceso"
-            className="hidden items-center justify-center gap-1.5 rounded-lg border-2 border-indigo-600 px-3.5 py-[calc(0.5rem-2px)] text-sm font-semibold text-indigo-600 transition-colors hover:bg-indigo-50 sm:inline-flex"
-          >
+          <a href="#solicitar-acceso" className="btn-secondary hidden sm:inline-flex">
             Solicitar acceso
           </a>
           <a href="#acceso" className="btn-primary">
@@ -200,6 +211,32 @@ function NavBar() {
         </div>
       </div>
     </header>
+  );
+}
+
+function SectionHeading({
+  eyebrow,
+  children,
+  description,
+  center = false,
+  light = false,
+}: {
+  eyebrow: string;
+  children: ReactNode;
+  description?: string;
+  center?: boolean;
+  light?: boolean;
+}) {
+  return (
+    <div className={`mb-12 max-w-2xl ${center ? 'mx-auto text-center' : ''}`}>
+      <p className={`text-xs font-semibold uppercase tracking-[0.2em] ${light ? 'text-brand-700' : 'text-brand-400'}`}>{eyebrow}</p>
+      <h2
+        className={`mt-3 text-3xl font-black uppercase leading-[1.05] tracking-tight sm:text-4xl ${light ? 'text-ink-950' : 'text-white'}`}
+      >
+        {children}
+      </h2>
+      {description && <p className={`mt-4 ${light ? 'text-zinc-600' : 'text-zinc-400'}`}>{description}</p>}
+    </div>
   );
 }
 
@@ -249,113 +286,110 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-ink-950">
       <NavBar />
       <RotatingBanner />
 
       {/* Hero + acceso */}
-      <section className="relative overflow-hidden bg-slate-900">
-        <div
-          className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-indigo-600/20 blur-3xl sm:h-96 sm:w-96"
+      <section className="relative overflow-hidden">
+        <img
+          src="/img/hero-night-highway.jpg"
+          alt=""
           aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-cover"
         />
-        <div
-          className="pointer-events-none absolute -left-24 bottom-0 h-64 w-64 rounded-full bg-blue-600/10 blur-3xl sm:h-72 sm:w-72"
-          aria-hidden="true"
-        />
-        <div className="relative mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:py-20 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-16 lg:px-8">
-          <div className="order-2 lg:order-1">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium tracking-wide text-indigo-200">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              Gestión de flotas de carga pesada
-            </div>
+        <div className="absolute inset-0 bg-gradient-to-r from-ink-950 via-ink-950/85 to-ink-950/30" aria-hidden="true" />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-ink-950 to-transparent" aria-hidden="true" />
 
-            <h1 className="text-4xl font-extrabold uppercase leading-[1.05] tracking-tight text-white sm:text-5xl">
-              El control de tu flota, en un solo lugar
+        <div className="relative mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:py-24 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:gap-16 lg:px-8">
+          <div className="order-2 lg:order-1">
+            <p className="eyebrow">Gestión de flotas de carga pesada</p>
+
+            <h1 className="mt-4 text-5xl font-black uppercase leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl">
+              El control de tu flota.
+              <br />
+              <span className="text-brand-400">En un solo lugar.</span>
             </h1>
-            <p className="mt-4 max-w-lg text-lg text-indigo-100/80">
+            <p className="mt-6 max-w-lg text-lg text-zinc-300">
               FleetNova combina GPS y diagnóstico OBD-II para que sepas dónde está cada camión, cómo está su
               motor y cuándo necesita atención, en tiempo real.
             </p>
 
-            <div className="mt-6 flex flex-wrap gap-3">
-              <a href="#acceso" className="btn-primary">
-                Iniciar sesión
+            <div className="mt-8 flex flex-wrap gap-3">
+              <a href="#acceso" className="btn-primary px-6 py-3 text-base">
+                Iniciar sesión →
               </a>
-              <a href="#caracteristicas" className="btn-secondary border-white/20 bg-transparent text-white hover:border-white/40 hover:bg-white/10">
+              <a href="#caracteristicas" className="btn-secondary px-6 py-3 text-base">
                 Ver características
               </a>
             </div>
 
-            <div className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-3">
-              {[
-                { label: 'GPS en tiempo real', icon: 'M15 10.5a3 3 0 11-6 0 3 3 0 016 0z M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z' },
-                { label: 'Diagnóstico OBD-II', icon: 'M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63' },
-                { label: 'Alertas 24/7', icon: 'M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0' },
-              ].map((fact) => (
-                <div key={fact.label} className="flex items-center gap-2.5 rounded-lg border border-white/10 bg-white/5 px-3 py-2.5">
-                  <svg className="h-4 w-4 flex-shrink-0 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d={fact.icon} />
-                  </svg>
-                  <span className="text-xs font-medium text-indigo-100">{fact.label}</span>
+            <div className="mt-12 grid max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3">
+              {HERO_STATS.map((stat) => (
+                <div key={stat.value} className="rounded-2xl border border-white/10 bg-ink-950/60 p-4 backdrop-blur">
+                  <p className="font-display text-3xl font-black leading-none text-white">{stat.value}</p>
+                  <p className="mt-2 text-xs leading-snug text-zinc-400">{stat.label}</p>
                 </div>
               ))}
             </div>
           </div>
 
           <div className="order-1 lg:order-2">
-            <div id="acceso" className="mx-auto w-full max-w-sm scroll-mt-24 rounded-2xl bg-white p-8 shadow-2xl shadow-black/40">
-              <div className="mb-6 text-center">
-                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600">
-                  <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.25h5.25M3 12h12.75" />
+            <div
+              id="acceso"
+              className="mx-auto w-full max-w-sm scroll-mt-24 rounded-3xl border border-white/10 bg-ink-900/80 p-8 shadow-2xl shadow-black/60 backdrop-blur-xl"
+            >
+              <div className="mb-6">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-400">
+                  <svg className="h-6 w-6 text-ink-950" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d={TRUCK_PATH} />
                   </svg>
                 </div>
-                <h2 className="text-xl font-bold text-gray-900">Iniciar sesión</h2>
-                <p className="mt-1 text-sm text-gray-500">Con tu cuenta de administrador o de conductor</p>
+                <h2 className="text-2xl font-black uppercase tracking-tight text-white">Iniciar sesión</h2>
+                <p className="mt-1 text-sm text-zinc-400">Con tu cuenta de administrador o de conductor</p>
               </div>
 
               <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
                 <div>
-                  <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-700">
+                  <label htmlFor="email" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-zinc-400">
                     Correo electrónico
                   </label>
                   <input
                     id="email"
                     type="email"
                     autoComplete="username"
-                    className="field-input w-full"
+                    className="field-input w-full py-2.5"
                     {...register('email', {
                       required: 'El correo es obligatorio',
                       pattern: { value: /^\S+@\S+\.\S+$/, message: 'Correo inválido' },
                     })}
                   />
-                  {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>}
+                  {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>}
                 </div>
 
                 <div>
-                  <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-700">
+                  <label htmlFor="password" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-zinc-400">
                     Contraseña
                   </label>
                   <input
                     id="password"
                     type="password"
                     autoComplete="current-password"
-                    className="field-input w-full"
+                    className="field-input w-full py-2.5"
                     {...register('password', { required: 'La contraseña es obligatoria' })}
                   />
-                  {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>}
+                  {errors.password && <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>}
                 </div>
 
                 {serverError && (
-                  <div className="rounded-md bg-red-50 p-2 text-sm text-red-700">{serverError}</div>
+                  <div className="rounded-xl border border-red-500/25 bg-red-500/10 p-3 text-sm text-red-300">{serverError}</div>
                 )}
 
-                <button type="submit" disabled={submitting} className="btn-primary w-full">
+                <button type="submit" disabled={submitting} className="btn-primary w-full py-3">
                   {redirecting ? 'Abriendo app del conductor...' : submitting ? 'Ingresando...' : 'Iniciar sesión'}
                 </button>
 
-                <p className="text-center text-xs text-gray-400">
+                <p className="text-center text-xs text-zinc-500">
                   Funciona tanto con credenciales de administrador como de conductor.
                 </p>
               </form>
@@ -365,63 +399,97 @@ export function Login() {
       </section>
 
       {/* Características */}
-      <section id="caracteristicas" className="scroll-mt-16 bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-16 lg:px-8">
-          <div className="mb-10 max-w-xl">
-            <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">Características</p>
-            <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-gray-900">
-              Todo lo que necesitas para operar la flota
-            </h2>
-            <p className="mt-3 text-gray-600">Funcionalidades pensadas para el día a día de una operación de carga pesada.</p>
+      <section id="caracteristicas" className="scroll-mt-16 bg-ink-950">
+        <div className="mx-auto max-w-7xl px-4 py-20 lg:px-8">
+          <SectionHeading
+            eyebrow="Características"
+            center
+            description="Funcionalidades pensadas para el día a día de una operación de carga pesada."
+          >
+            Mueve tu operación <span className="tag-highlight">hacia</span> el futuro
+          </SectionHeading>
+
+          <div className="mb-4 grid gap-4 lg:grid-cols-3">
+            <div className="relative min-h-[260px] overflow-hidden rounded-3xl border border-white/5">
+              <img src="/img/warehouse.jpg" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/40 to-transparent" />
+              <p className="absolute inset-x-5 bottom-5 text-sm font-medium text-zinc-200">
+                Del patio de carga a la carretera, cada unidad registrada y monitoreada.
+              </p>
+            </div>
+
+            <div className="flex flex-col justify-between rounded-3xl border border-white/5 bg-ink-900 p-7">
+              <div>
+                <div className="icon-badge">
+                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d={TRUCK_PATH} />
+                  </svg>
+                </div>
+                <h3 className="mt-5 text-2xl font-black uppercase leading-tight tracking-tight text-white">
+                  Logística que te mantiene <span className="text-brand-400">adelante</span>
+                </h3>
+                <p className="mt-3 text-sm text-zinc-400">
+                  Telemetría, alertas y mantenimiento en una sola plataforma, para decidir con datos y no por radio.
+                </p>
+              </div>
+              <a href="#como-funciona" className="link-action mt-6 text-sm">
+                Cómo funciona →
+              </a>
+            </div>
+
+            <div className="relative min-h-[260px] overflow-hidden rounded-3xl border border-white/5">
+              <img src="/img/fog-truck.jpg" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/30 to-transparent" />
+              <a href="#mapa" className="btn-secondary absolute bottom-5 left-5 border-white/20 bg-ink-950/60 backdrop-blur">
+                Ver mapa en vivo →
+              </a>
+            </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {FEATURES.map((feature) => (
-              <div key={feature.title} className="card flex items-start gap-4 p-5">
-                <div className="icon-badge">
+              <div
+                key={feature.title}
+                className="group rounded-3xl border border-white/5 bg-ink-900 p-6 transition-colors hover:border-brand-400/30"
+              >
+                <div className="icon-badge transition-colors group-hover:bg-brand-400 group-hover:text-ink-950">
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                     {feature.icon}
                   </svg>
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-900">{feature.title}</p>
-                  <p className="mt-1 text-sm text-gray-600">{feature.description}</p>
-                </div>
+                <p className="mt-5 text-base font-bold text-white">{feature.title}</p>
+                <p className="mt-1.5 text-sm text-zinc-400">{feature.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Cómo funciona */}
-      <section id="como-funciona" className="scroll-mt-16 bg-gray-50">
-        <div className="mx-auto max-w-6xl px-4 py-16 lg:px-8">
-          <div className="mb-10 max-w-xl">
-            <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">Cómo funciona</p>
-            <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-gray-900">
+      {/* Cómo funciona: franja clara con tarjetas oscuras, como en el diseño de referencia */}
+      <section id="como-funciona" className="scroll-mt-16 bg-zinc-100">
+        <div className="mx-auto max-w-7xl px-4 py-20 lg:px-8">
+          <div className="grid gap-8 lg:grid-cols-2 lg:items-end">
+            <SectionHeading eyebrow="Cómo funciona" light>
               Del camión a tu pantalla, sin pasos manuales
-            </h2>
+            </SectionHeading>
+            <p className="mb-12 max-w-md text-zinc-600 lg:justify-self-end">
+              La telemetría viaja sola desde el vehículo hasta el panel web y la app del conductor. Nadie tiene que
+              cargar datos a mano.
+            </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            {HOW_IT_WORKS.map((item, i) => (
-              <div key={item.step} className="card relative p-6">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-sm font-bold text-white">
+          <div className="grid gap-4 md:grid-cols-3">
+            {HOW_IT_WORKS.map((item) => (
+              <div key={item.step} className="relative overflow-hidden rounded-3xl bg-ink-950 p-7 text-white shadow-xl shadow-black/10">
+                <span className="tag-highlight py-0.5 text-xs font-bold uppercase tracking-wider">Paso {item.step}</span>
+                <p className="mt-6 text-xl font-black uppercase leading-tight tracking-tight">{item.title}</p>
+                <p className="mt-3 text-sm text-zinc-400">{item.description}</p>
+                <span
+                  className="pointer-events-none absolute -bottom-6 -right-2 font-display text-[9rem] font-black leading-none text-white/[0.04]"
+                  aria-hidden="true"
+                >
                   {item.step}
                 </span>
-                <p className="mt-4 text-base font-semibold text-gray-900">{item.title}</p>
-                <p className="mt-1.5 text-sm text-gray-600">{item.description}</p>
-                {i < HOW_IT_WORKS.length - 1 && (
-                  <svg
-                    className="pointer-events-none absolute -right-4 top-1/2 hidden h-6 w-6 -translate-y-1/2 text-indigo-300 md:block"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                  </svg>
-                )}
               </div>
             ))}
           </div>
@@ -429,18 +497,16 @@ export function Login() {
       </section>
 
       {/* Mapa en vivo */}
-      <section id="mapa" className="scroll-mt-16 bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-16 lg:px-8">
+      <section id="mapa" className="scroll-mt-16 bg-ink-950">
+        <div className="mx-auto max-w-7xl px-4 py-20 lg:px-8">
           <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
-            <div className="max-w-xl">
-              <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">Mapa en vivo</p>
-              <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-gray-900">Así se ve en el mapa</h2>
-              <p className="mt-3 text-gray-600">
-                Uno de los vehículos de nuestra base de datos de demostración, con su posición actualizándose en
-                vivo cada pocos segundos — igual que lo vería un administrador o un conductor en la plataforma.
-              </p>
-            </div>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
+            <SectionHeading
+              eyebrow="Mapa en vivo"
+              description="Uno de los vehículos de nuestra base de datos de demostración, con su posición actualizándose en vivo cada pocos segundos — igual que lo vería un administrador o un conductor en la plataforma."
+            >
+              Así se ve en el mapa
+            </SectionHeading>
+            <span className="mb-12 inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-emerald-300">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping-slow absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
@@ -454,64 +520,60 @@ export function Login() {
       </section>
 
       {/* Opiniones */}
-      <section id="opiniones" className="scroll-mt-16 bg-slate-900">
-        <div className="mx-auto max-w-6xl px-4 py-16 lg:px-8">
-          <div className="mb-10 max-w-xl">
-            <p className="text-xs font-semibold uppercase tracking-wider text-indigo-300">Opiniones</p>
-            <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-white">Así se vive usar FleetNova</h2>
-            <p className="mt-3 text-indigo-100/70">
-              Escenarios de ejemplo pensados para mostrar cómo se usaría la plataforma en el día a día — FleetNova
-              es un proyecto académico y todavía no tiene clientes reales.
-            </p>
-          </div>
+      <section id="opiniones" className="scroll-mt-16 border-y border-white/5 bg-ink-900">
+        <div className="mx-auto max-w-7xl px-4 py-20 lg:px-8">
+          <SectionHeading
+            eyebrow="Opiniones"
+            description="Escenarios de ejemplo pensados para mostrar cómo se usaría la plataforma en el día a día — FleetNova es un proyecto académico y todavía no tiene clientes reales."
+          >
+            Así se vive usar <span className="text-brand-400">FleetNova</span>
+          </SectionHeading>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {TESTIMONIALS.map((testimonial) => (
-              <div key={testimonial.role} className="relative rounded-xl bg-white p-5 shadow-lg shadow-black/20">
-                <span className="absolute right-4 top-4 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-gray-500">
+              <div key={testimonial.role} className="relative flex flex-col rounded-3xl border border-white/5 bg-ink-950 p-6">
+                <span className="absolute right-5 top-5 rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
                   Ejemplo
                 </span>
-                <svg className="h-6 w-6 text-indigo-200" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="h-7 w-7 text-brand-400" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M7.17 6C4.86 8.11 3.5 10.85 3.5 13.9c0 3.06 2.15 5.1 4.62 5.1 2.24 0 3.88-1.72 3.88-3.85 0-2.02-1.42-3.6-3.3-3.6-.34 0-.7.06-.86.11.35-2.07 2.14-4.29 4-5.44L7.17 6zm10 0c-2.3 2.11-3.67 4.85-3.67 7.9 0 3.06 2.15 5.1 4.62 5.1 2.24 0 3.88-1.72 3.88-3.85 0-2.02-1.42-3.6-3.3-3.6-.34 0-.7.06-.86.11.35-2.07 2.14-4.29 4-5.44L17.17 6z" />
                 </svg>
-                <p className="mt-3 text-sm text-gray-700">{testimonial.quote}</p>
-                <div className="mt-4 flex items-center gap-2.5 border-t border-gray-100 pt-4">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
+                <p className="mt-4 flex-1 text-sm leading-relaxed text-zinc-300">{testimonial.quote}</p>
+                <div className="mt-6 flex items-center gap-3 border-t border-white/5 pt-5">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-400 text-xs font-bold text-ink-950">
                     {testimonial.initials}
                   </span>
-                  <p className="text-xs font-medium text-gray-900">{testimonial.role}</p>
+                  <p className="text-sm font-semibold text-white">{testimonial.role}</p>
                 </div>
               </div>
             ))}
           </div>
-          <p className="mt-6 text-xs text-indigo-100/40">
+          <p className="mt-6 text-xs text-zinc-600">
             Testimonios de ejemplo, no de clientes reales — FleetNova es un proyecto académico.
           </p>
         </div>
       </section>
 
       {/* Actores */}
-      <section id="actores" className="scroll-mt-16 bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-16 lg:px-8">
-          <div className="mb-10 max-w-xl">
-            <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">Actores del sistema</p>
-            <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-gray-900">Un acceso, dos experiencias</h2>
-            <p className="mt-3 text-gray-600">La misma cuenta de acceso te lleva al panel correcto según tu rol.</p>
-          </div>
+      <section id="actores" className="scroll-mt-16 bg-ink-950">
+        <div className="mx-auto max-w-7xl px-4 py-20 lg:px-8">
+          <SectionHeading eyebrow="Actores del sistema" description="La misma cuenta de acceso te lleva al panel correcto según tu rol.">
+            Un acceso, <span className="text-brand-400">dos experiencias</span>
+          </SectionHeading>
 
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2">
             {ROLES.map((role) => (
-              <div key={role.name} className="card p-6">
-                <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-600">
-                  {role.forWhom}
-                </span>
-                <p className="mt-3 text-lg font-semibold text-gray-900">{role.name}</p>
-                <ul className="mt-3 space-y-2">
+              <div key={role.name} className="rounded-3xl border border-white/5 bg-ink-900 p-7">
+                <span className="tag-highlight py-0.5 text-xs font-bold uppercase tracking-wider">{role.forWhom}</span>
+                <p className="mt-4 text-xl font-black uppercase tracking-tight text-white">{role.name}</p>
+                <ul className="mt-4 space-y-3">
                   {role.bullets.map((bullet) => (
-                    <li key={bullet} className="flex gap-2 text-sm text-gray-600">
-                      <svg className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                      </svg>
+                    <li key={bullet} className="flex gap-3 text-sm text-zinc-300">
+                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-400/15 text-brand-400">
+                        <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                      </span>
                       {bullet}
                     </li>
                   ))}
@@ -523,44 +585,41 @@ export function Login() {
       </section>
 
       {/* Solicitar acceso */}
-      <section id="solicitar-acceso" className="scroll-mt-16 bg-gray-50">
-        <div className="mx-auto max-w-6xl px-4 py-16 lg:px-8">
+      <section id="solicitar-acceso" className="scroll-mt-16 border-t border-white/5 bg-ink-900">
+        <div className="mx-auto max-w-7xl px-4 py-20 lg:px-8">
           <div className="grid gap-10 lg:grid-cols-2 lg:items-start">
-            <div className="max-w-lg">
-              <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">Solicitar acceso</p>
-              <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-gray-900">¿Aún no tienes cuenta?</h2>
-              <p className="mt-3 text-gray-600">
-                Cuéntanos quién eres y nuestro equipo se pondrá en contacto para darte acceso a la plataforma,
-                ya sea como administrador o como conductor.
-              </p>
-            </div>
+            <SectionHeading
+              eyebrow="Solicitar acceso"
+              description="Cuéntanos quién eres y nuestro equipo se pondrá en contacto para darte acceso a la plataforma, ya sea como administrador o como conductor."
+            >
+              ¿Aún no tienes <span className="text-brand-400">cuenta?</span>
+            </SectionHeading>
             <AccessRequestForm />
           </div>
         </div>
       </section>
 
       {/* CTA final */}
-      <section className="bg-indigo-600">
-        <div className="mx-auto max-w-4xl px-4 py-16 text-center lg:px-8">
-          <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-            ¿Listo para monitorear tu flota?
+      <section className="relative overflow-hidden">
+        <img src="/img/sunset-convoy.jpg" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-ink-950/75" aria-hidden="true" />
+        <div className="relative mx-auto max-w-4xl px-4 py-24 text-center lg:px-8">
+          <h2 className="text-4xl font-black uppercase leading-[1] tracking-tight text-white sm:text-5xl">
+            ¿Listo para <span className="text-brand-400">monitorear</span> tu flota?
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-indigo-100">
+          <p className="mx-auto mt-4 max-w-xl text-zinc-300">
             Entra con tu cuenta de administrador o de conductor y compruébalo tú mismo, en vivo.
           </p>
-          <a
-            href="#acceso"
-            className="mt-6 inline-flex items-center justify-center gap-1.5 rounded-lg bg-white px-6 py-3 text-base font-semibold text-indigo-600 shadow-sm transition-colors hover:bg-indigo-50"
-          >
-            Iniciar sesión
+          <a href="#acceso" className="btn-primary mt-8 px-8 py-3 text-base">
+            Iniciar sesión →
           </a>
         </div>
       </section>
 
-      <footer className="border-t border-gray-200 bg-white">
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 py-8 text-center lg:px-8">
+      <footer className="border-t border-white/5 bg-ink-950">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-8 sm:flex-row lg:px-8">
           <Logo />
-          <p className="text-xs text-gray-500">Gestión de flotas de carga pesada</p>
+          <p className="text-xs text-zinc-500">Gestión de flotas de carga pesada · Fotos: Unsplash</p>
         </div>
       </footer>
     </div>

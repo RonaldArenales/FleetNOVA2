@@ -76,14 +76,14 @@ export function VehicleDetail() {
           <div className="flex flex-wrap items-start justify-between gap-4 card p-5">
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-3xl font-bold tracking-tight text-gray-900">{vehicleQuery.data.plate}</h1>
+                <h1 className="text-3xl font-black uppercase tracking-tight text-white">{vehicleQuery.data.plate}</h1>
                 <VehicleStatusBadge status={vehicleQuery.data.status} />
               </div>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-zinc-400">
                 {vehicleQuery.data.brand} {vehicleQuery.data.model} · {vehicleQuery.data.year}
               </p>
-              <p className="mt-1 text-sm text-gray-500">Odómetro: {vehicleQuery.data.odometerKm.toLocaleString('es')} km</p>
-              {vehicleQuery.data.vin && <p className="mt-1 text-xs text-gray-400">VIN: {vehicleQuery.data.vin}</p>}
+              <p className="mt-1 text-sm text-zinc-400">Odómetro: {vehicleQuery.data.odometerKm.toLocaleString('es')} km</p>
+              {vehicleQuery.data.vin && <p className="mt-1 text-xs text-zinc-500">VIN: {vehicleQuery.data.vin}</p>}
             </div>
             {canWrite && (
               <button
@@ -126,7 +126,7 @@ export function VehicleDetail() {
       )}
 
       {!vehicleQuery.isLoading && !vehicleQuery.data && !vehicleQuery.isError && (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-zinc-400">
           Vehículo no encontrado. <Link to="/vehiculos" className="link-action">Volver</Link>
         </p>
       )}
