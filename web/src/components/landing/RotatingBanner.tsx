@@ -17,9 +17,9 @@ export function RotatingBanner() {
   }, []);
 
   return (
-    <div className="bg-indigo-600 py-2.5">
-      <div className="mx-auto flex max-w-6xl flex-col items-center gap-1.5 px-4 lg:px-8">
-        <p key={index} className="animate-fade-in text-center text-sm font-medium text-white sm:text-base">
+    <div className="bg-brand-400 py-2.5">
+      <div className="mx-auto flex max-w-7xl flex-col items-center gap-1.5 px-4 lg:px-8">
+        <p key={index} className="animate-fade-in text-center text-sm font-semibold text-ink-950 sm:text-base">
           {PHRASES[index]}
         </p>
         <div className="flex gap-1.5">
@@ -30,7 +30,7 @@ export function RotatingBanner() {
               onClick={() => setIndex(i)}
               aria-label={`Mostrar frase ${i + 1}`}
               aria-current={i === index}
-              className={`h-1.5 rounded-full transition-all ${i === index ? 'w-4 bg-white' : 'w-1.5 bg-white/40 hover:bg-white/70'}`}
+              className={`h-1.5 rounded-full transition-all ${i === index ? 'w-4 bg-ink-950' : 'w-1.5 bg-ink-950/30 hover:bg-ink-950/60'}`}
             />
           ))}
         </div>

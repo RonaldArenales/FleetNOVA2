@@ -1,17 +1,19 @@
 import L from 'leaflet';
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 
-const defaultIcon = L.icon({
-  iconUrl: markerIcon,
-  iconRetinaUrl: markerIcon2x,
-  shadowUrl: markerShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
+// Marcador propio (HTML) acorde al tema oscuro/amarillo; al ser un divIcon no
+// depende de las imágenes por defecto de Leaflet.
+const truckIcon = L.divIcon({
+  className: 'truck-marker',
+  html: `<div style="position:relative;width:44px;height:44px">
+    <span style="position:absolute;inset:0;border-radius:9999px;background:rgba(252,196,25,.25)"></span>
+    <span style="position:absolute;inset:6px;display:flex;align-items:center;justify-content:center;border-radius:9999px;background:#fcc419;border:3px solid #0a0a0c;box-shadow:0 6px 18px rgba(0,0,0,.5)">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#0a0a0c" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.25h5.25M3 12h12.75"/></svg>
+    </span>
+  </div>`,
+  iconSize: [44, 44],
+  iconAnchor: [22, 22],
+  popupAnchor: [0, -22],
 });
 
 export function VehicleMap({
@@ -29,12 +31,12 @@ export function VehicleMap({
     <div className="h-full w-full">
       <MapContainer center={[lat, lng]} zoom={14} scrollWheelZoom className="h-full w-full">
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         />
-        <Marker position={[lat, lng]} icon={defaultIcon}>
+        <Marker position={[lat, lng]} icon={truckIcon}>
           <Popup>
-            {plate}
+            <strong>{plate}</strong>
             <br />
             Velocidad: {speedKph.toFixed(0)} km/h
           </Popup>

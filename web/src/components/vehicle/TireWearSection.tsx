@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../lib/api';
-import { formatKm } from '../../lib/format';
 import type { TireWear } from '../../types';
 import { Section } from './Section';
 import { LoadingState, ErrorState } from '../QueryState';
+import { formatKm } from '../../lib/format';
 
 export function TireWearSection({ vehicleId }: { vehicleId: string }) {
   const query = useQuery({
@@ -23,25 +23,25 @@ export function TireWearSection({ vehicleId }: { vehicleId: string }) {
       {query.isError && <ErrorState error={query.error} retry={() => query.refetch()} />}
       {query.data && (
         <div className="space-y-3">
-          <div className="h-4 w-full overflow-hidden rounded-full bg-ink-800">
+          <div className="h-4 w-full overflow-hidden rounded-full bg-white/5">
             <div className={`h-full ${barColor} transition-all`} style={{ width: `${wearPercent}%` }} />
           </div>
-          <div className="grid grid-cols-2 gap-3 text-sm text-ink-400 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 text-sm text-zinc-400 sm:grid-cols-4">
             <div>
-              <p className="text-xs uppercase text-ink-500">Desgaste</p>
-              <p className="font-mono font-semibold tabular-nums text-ink-50">{query.data.wearPercent.toFixed(1)}%</p>
+              <p className="text-xs uppercase text-zinc-500">Desgaste</p>
+              <p className="font-semibold text-white">{query.data.wearPercent.toFixed(1)}%</p>
             </div>
             <div>
-              <p className="text-xs uppercase text-ink-500">Km recorridos</p>
-              <p className="font-mono font-semibold tabular-nums text-ink-50">{formatKm(query.data.kmSinceInstalled)} km</p>
+              <p className="text-xs uppercase text-zinc-500">Km recorridos</p>
+              <p className="font-semibold text-white">{formatKm(query.data.kmSinceInstalled)} km</p>
             </div>
             <div>
-              <p className="text-xs uppercase text-ink-500">Vida útil</p>
-              <p className="font-mono font-semibold tabular-nums text-ink-50">{formatKm(query.data.tireLifeKm)} km</p>
+              <p className="text-xs uppercase text-zinc-500">Vida útil</p>
+              <p className="font-semibold text-white">{formatKm(query.data.tireLifeKm)} km</p>
             </div>
             <div>
-              <p className="text-xs uppercase text-ink-500">Km restantes</p>
-              <p className="font-mono font-semibold tabular-nums text-ink-50">{formatKm(query.data.remainingKm)} km</p>
+              <p className="text-xs uppercase text-zinc-500">Km restantes</p>
+              <p className="font-semibold text-white">{formatKm(query.data.remainingKm)} km</p>
             </div>
           </div>
         </div>

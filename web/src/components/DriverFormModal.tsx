@@ -41,35 +41,35 @@ export function DriverFormModal({
     <Modal title={initial ? 'Editar conductor' : 'Nuevo conductor'} onClose={onClose}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <label className="mb-1 block text-sm font-medium text-ink-300">Nombre completo</label>
+          <label className="mb-1 block text-sm font-medium text-zinc-200">Nombre completo</label>
           <input
             className="field-input w-full"
             {...register('name', { required: 'El nombre es obligatorio' })}
           />
-          {errors.name && <p className="mt-1 text-xs text-rose-400">{errors.name.message}</p>}
+          {errors.name && <p className="mt-1 text-xs text-red-400">{errors.name.message}</p>}
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-ink-300">Documento de identidad</label>
+          <label className="mb-1 block text-sm font-medium text-zinc-200">Documento de identidad</label>
           <input
             className="field-input w-full"
             {...register('documentId', { required: 'El documento es obligatorio' })}
           />
-          {errors.documentId && <p className="mt-1 text-xs text-rose-400">{errors.documentId.message}</p>}
+          {errors.documentId && <p className="mt-1 text-xs text-red-400">{errors.documentId.message}</p>}
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-ink-300">Número de licencia</label>
+          <label className="mb-1 block text-sm font-medium text-zinc-200">Número de licencia</label>
           <input
             className="field-input w-full"
             {...register('licenseNumber', { required: 'La licencia es obligatoria' })}
           />
-          {errors.licenseNumber && <p className="mt-1 text-xs text-rose-400">{errors.licenseNumber.message}</p>}
+          {errors.licenseNumber && <p className="mt-1 text-xs text-red-400">{errors.licenseNumber.message}</p>}
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-ink-300">Teléfono (opcional)</label>
+          <label className="mb-1 block text-sm font-medium text-zinc-200">Teléfono (opcional)</label>
           <input className="field-input w-full" {...register('phone')} />
         </div>
 
-        {errorMessage && <div className="rounded-md bg-rose-500/10 p-2 text-sm text-rose-300">{errorMessage}</div>}
+        {errorMessage && <div className="rounded-md bg-red-500/10 p-2 text-sm text-red-300">{errorMessage}</div>}
 
         <div className="flex justify-end gap-2 pt-2">
           <button

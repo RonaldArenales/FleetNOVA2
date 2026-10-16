@@ -2,6 +2,32 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
+/*
+ * Tema FleetNova: fondo carbón ("ink") con acento amarillo ("brand").
+ * Todos los componentes usan estos tokens, así que para cambiar la paleta
+ * basta con editar este bloque.
+ */
+@theme {
+  --color-brand-50: #fffbea;
+  --color-brand-100: #fff3c4;
+  --color-brand-200: #ffe588;
+  --color-brand-300: #ffd54a;
+  --color-brand-400: #fcc419;
+  --color-brand-500: #f0ae00;
+  --color-brand-600: #cc8a00;
+  --color-brand-700: #a36500;
+  --color-brand-800: #864f07;
+  --color-brand-900: #72410c;
+  --color-brand-950: #432100;
+
+  --color-ink-600: #3a3a42;
+  --color-ink-700: #2a2a30;
+  --color-ink-800: #1d1d22;
+  --color-ink-850: #17171b;
+  --color-ink-900: #121215;
+  --color-ink-950: #0a0a0c;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
@@ -11,37 +37,65 @@
 :root {
   --font-display: 'Archivo', 'Segoe UI', system-ui, -apple-system, sans-serif;
   --font-body: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-}
-
-/* Paleta del panel: fondo azul oscuro (escala slate) + acento indigo,
-   la paleta "azul y blanco" original -- los nombres de clase ("ink-*")
-   se mantienen igual, solo cambian los valores para no tener que tocar
-   cada componente que ya los usa. */
-@theme {
-  --color-ink-950: #020617;
-  --color-ink-900: #0f172a;
-  --color-ink-800: #1e293b;
-  --color-ink-700: #334155;
-  --color-ink-600: #475569;
-  --color-ink-500: #64748b;
-  --color-ink-400: #94a3b8;
-  --color-ink-300: #cbd5e1;
-  --color-ink-200: #e2e8f0;
-  --color-ink-100: #f1f5f9;
-  --color-ink-50: #ffffff;
+  color-scheme: dark;
 }
 
 body {
   margin: 0;
   font-family: var(--font-body);
-  background-color: #020617;
-  color: #f1f5f9;
+  background-color: var(--color-ink-950);
+  color: #e4e4e7;
 }
 
+::selection {
+  background: var(--color-brand-400);
+  color: var(--color-ink-950);
+}
+
+/* Mapas: contenedor redondeado y popups/controles acordes al tema oscuro. */
 .leaflet-container {
   width: 100%;
   height: 100%;
-  border-radius: 0.5rem;
+  border-radius: 1rem;
+  background: var(--color-ink-900);
+  font-family: var(--font-body);
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: var(--color-ink-800);
+  color: #f4f4f5;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.5);
+}
+
+.leaflet-popup-content-wrapper {
+  border: 1px solid rgb(255 255 255 / 0.08);
+  border-radius: 0.875rem;
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+  color: #a1a1aa;
+}
+
+.leaflet-bar a,
+.leaflet-bar a:hover {
+  background: var(--color-ink-800);
+  color: #f4f4f5;
+  border-bottom-color: rgb(255 255 255 / 0.08);
+}
+
+.leaflet-container .leaflet-control-attribution {
+  background: rgb(10 10 12 / 0.7);
+  color: #71717a;
+}
+
+.leaflet-container .leaflet-control-attribution a {
+  color: #a1a1aa;
+}
+
+.truck-marker {
+  background: none;
+  border: none;
 }
 
 @keyframes fadeIn {
@@ -82,46 +136,43 @@ body {
     font-family: var(--font-display);
     letter-spacing: -0.01em;
   }
-}
-
-/* El panel autenticado (todo lo que cuelga de Layout.tsx) usa la misma
-   tipografia limpia en titulos y cuerpo, como la referencia de dashboard
-   financiero que pidio el usuario -- en vez de la fuente display mas
-   condensada que sigue usando la landing publica. */
-.dashboard-shell h1,
-.dashboard-shell h2,
-.dashboard-shell h3 {
-  font-family: var(--font-body);
-  letter-spacing: -0.01em;
+  input[type='checkbox'],
+  input[type='radio'] {
+    accent-color: var(--color-brand-400);
+  }
 }
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-700 px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-indigo-900/40 transition-opacity duration-150 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98];
+    @apply inline-flex items-center justify-center gap-1.5 rounded-full bg-brand-400 px-5 py-2 text-sm font-semibold text-ink-950 transition-colors duration-150 hover:bg-brand-300 disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98];
   }
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-1.5 rounded-full border border-ink-700 bg-ink-800 px-5 py-2 text-sm font-semibold text-ink-200 transition-colors duration-150 hover:border-ink-600 hover:bg-ink-700 disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98];
+    @apply inline-flex items-center justify-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-5 py-2 text-sm font-semibold text-zinc-100 transition-colors duration-150 hover:border-white/30 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98];
   }
   .btn-danger {
     @apply inline-flex items-center justify-center gap-1.5 rounded-full bg-rose-600 px-5 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-rose-500 disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98];
   }
   .link-action {
-    @apply font-medium text-indigo-400 transition-colors hover:text-indigo-300 hover:underline;
+    @apply font-medium text-brand-400 transition-colors hover:text-brand-300 hover:underline;
   }
   .link-danger {
     @apply font-medium text-rose-400 transition-colors hover:text-rose-300 hover:underline;
   }
   .card {
-    @apply rounded-2xl border border-ink-800 bg-ink-900;
+    @apply rounded-2xl border border-white/[0.07] bg-ink-900 shadow-lg shadow-black/20;
   }
   .field-input {
-    @apply rounded-full border border-ink-700 bg-ink-900 px-4 py-2 text-sm text-ink-100 shadow-none transition-colors placeholder:text-ink-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30;
+    @apply rounded-xl border border-white/10 bg-ink-950/70 px-3 py-2 text-sm text-zinc-100 transition-colors placeholder:text-zinc-500 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400/25;
   }
   .icon-badge {
-    @apply flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl border border-indigo-500/20 bg-indigo-500/10 text-indigo-400;
+    @apply flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl border border-brand-400/25 bg-brand-400/10 text-brand-400;
   }
-  .table-head {
-    @apply bg-ink-900/60 text-xs font-medium uppercase tracking-wide text-ink-400;
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.2em] text-brand-400;
+  }
+  /* Etiqueta amarilla resaltada, como el "TOGETHER" del diseño de referencia. */
+  .tag-highlight {
+    @apply inline-block rounded-md bg-brand-400 px-2 text-ink-950;
   }
   .font-display {
     font-family: var(--font-display);

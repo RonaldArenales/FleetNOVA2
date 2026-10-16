@@ -28,14 +28,14 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-100 p-6">
-          <div className="w-full max-w-md rounded-xl bg-white p-8 text-center shadow-lg">
-            <h1 className="mb-2 text-xl font-semibold text-gray-800">Algo salió mal</h1>
-            <p className="mb-4 text-sm text-gray-500">
+        <div className="flex min-h-screen items-center justify-center bg-white/5 p-6">
+          <div className="w-full max-w-md rounded-xl bg-ink-900 p-8 text-center shadow-lg">
+            <h1 className="mb-2 text-xl font-semibold text-white">Algo salió mal</h1>
+            <p className="mb-4 text-sm text-zinc-400">
               Ocurrió un error inesperado en la aplicación. Intenta recargar la página.
             </p>
             {this.state.message && (
-              <p className="mb-4 rounded bg-red-50 p-2 text-xs text-red-600">{this.state.message}</p>
+              <p className="mb-4 rounded bg-red-500/10 p-2 text-xs text-red-400">{this.state.message}</p>
             )}
             <button
               type="button"

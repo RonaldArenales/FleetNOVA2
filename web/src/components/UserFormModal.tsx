@@ -48,24 +48,24 @@ export function UserFormModal({
     <Modal title={initial ? 'Editar usuario' : 'Nuevo usuario'} onClose={onClose}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <label className="mb-1 block text-sm font-medium text-ink-300">Nombre completo</label>
+          <label className="mb-1 block text-sm font-medium text-zinc-200">Nombre completo</label>
           <input
             className="field-input w-full"
             {...register('name', { required: 'El nombre es obligatorio' })}
           />
-          {errors.name && <p className="mt-1 text-xs text-rose-400">{errors.name.message}</p>}
+          {errors.name && <p className="mt-1 text-xs text-red-400">{errors.name.message}</p>}
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-ink-300">Correo electrónico</label>
+          <label className="mb-1 block text-sm font-medium text-zinc-200">Correo electrónico</label>
           <input
             type="email"
             className="field-input w-full"
             {...register('email', { required: 'El correo es obligatorio' })}
           />
-          {errors.email && <p className="mt-1 text-xs text-rose-400">{errors.email.message}</p>}
+          {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>}
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-ink-300">
+          <label className="mb-1 block text-sm font-medium text-zinc-200">
             Contraseña {initial && '(dejar en blanco para no cambiar)'}
           </label>
           <input
@@ -73,10 +73,10 @@ export function UserFormModal({
             className="field-input w-full"
             {...register('password', { required: initial ? false : 'La contraseña es obligatoria' })}
           />
-          {errors.password && <p className="mt-1 text-xs text-rose-400">{errors.password.message}</p>}
+          {errors.password && <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>}
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-ink-300">Rol</label>
+          <label className="mb-1 block text-sm font-medium text-zinc-200">Rol</label>
           <select className="field-input w-full" {...register('role')}>
             <option value="ADMIN">Administrador</option>
             <option value="OPERATOR">Operador</option>
@@ -86,7 +86,7 @@ export function UserFormModal({
 
         {selectedRole === 'VIEWER' && (
           <div>
-            <label className="mb-1 block text-sm font-medium text-ink-300">Operador asociado</label>
+            <label className="mb-1 block text-sm font-medium text-zinc-200">Operador asociado</label>
             <select className="field-input w-full" {...register('viewScopeOwnerId', { setValueAs: (v) => (v ? Number(v) : null) })}>
               <option value="">Sin asociar (no verá vehículos)</option>
               {operators.map((op) => (
@@ -95,13 +95,13 @@ export function UserFormModal({
                 </option>
               ))}
             </select>
-            <p className="mt-1 text-xs text-ink-500">
+            <p className="mt-1 text-xs text-zinc-400">
               El observador solo verá la flota de este operador.
             </p>
           </div>
         )}
 
-        {errorMessage && <div className="rounded-md bg-rose-500/10 p-2 text-sm text-rose-300">{errorMessage}</div>}
+        {errorMessage && <div className="rounded-md bg-red-500/10 p-2 text-sm text-red-300">{errorMessage}</div>}
 
         <div className="flex justify-end gap-2 pt-2">
           <button

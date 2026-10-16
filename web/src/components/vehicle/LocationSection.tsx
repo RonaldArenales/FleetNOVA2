@@ -18,21 +18,18 @@ export function LocationSection({ gps, plate }: { gps: GpsPoint | null; plate: s
       {gps && (
         <div className="space-y-3">
           <VehicleMap lat={gps.lat} lng={gps.lng} speedKph={gps.speedKph} plate={plate} />
-          <div className="flex flex-wrap gap-6 text-sm text-ink-400">
+          <div className="flex flex-wrap gap-6 text-sm text-zinc-400">
             <span>
-              <span className="font-medium text-ink-200">Latitud:</span>{' '}
-              <span className="font-mono tabular-nums">{gps.lat.toFixed(5)}</span>
+              <span className="font-medium text-zinc-100">Latitud:</span> {gps.lat.toFixed(5)}
             </span>
             <span>
-              <span className="font-medium text-ink-200">Longitud:</span>{' '}
-              <span className="font-mono tabular-nums">{gps.lng.toFixed(5)}</span>
+              <span className="font-medium text-zinc-100">Longitud:</span> {gps.lng.toFixed(5)}
             </span>
             <span>
-              <span className="font-medium text-ink-200">Velocidad:</span>{' '}
-              <span className="font-mono tabular-nums">{gps.speedKph.toFixed(2)} km/h</span>
+              <span className="font-medium text-zinc-100">Velocidad:</span> {gps.speedKph.toFixed(2)} km/h
             </span>
             <span>
-              <span className="font-medium text-ink-200">Última actualización:</span> {formatDateTime(gps.timestamp)}
+              <span className="font-medium text-zinc-100">Última actualización:</span> {formatDateTime(gps.timestamp)}
             </span>
           </div>
         </div>

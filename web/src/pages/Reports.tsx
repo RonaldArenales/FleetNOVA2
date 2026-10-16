@@ -52,14 +52,14 @@ export function Reports() {
           </svg>
         </div>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-ink-50">Reportes</h1>
-          <p className="text-sm text-ink-500">Resumen de operación y mantenimiento por vehículo</p>
+          <h1 className="text-3xl font-black uppercase tracking-tight text-white">Reportes</h1>
+          <p className="text-sm text-zinc-400">Resumen de operación y mantenimiento por vehículo</p>
         </div>
       </div>
 
       <div className="card flex flex-wrap items-end gap-3 p-4">
         <div>
-          <label className="mb-1 block text-xs font-medium text-ink-500">Desde</label>
+          <label className="mb-1 block text-xs font-medium text-zinc-400">Desde</label>
           <input
             type="date"
             value={from}
@@ -69,7 +69,7 @@ export function Reports() {
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-ink-500">Hasta</label>
+          <label className="mb-1 block text-xs font-medium text-zinc-400">Hasta</label>
           <input
             type="date"
             value={to}
@@ -95,7 +95,7 @@ export function Reports() {
         {reportQuery.data && vehicles.length > 0 && (
           <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="table-head">
+            <thead className="bg-white/[0.03] text-[11px] uppercase tracking-wider text-zinc-500">
               <tr>
                 <th className="px-4 py-3">Vehículo</th>
                 <th className="px-4 py-3 text-right">Distancia (km)</th>
@@ -104,24 +104,24 @@ export function Reports() {
                 <th className="px-4 py-3 text-right">Mantenimientos</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-ink-800">
+            <tbody className="divide-y divide-white/5">
               {vehicles.map((v) => (
                 <tr key={v.vehicleId}>
-                  <td className="px-4 py-3 font-mono font-medium text-ink-200">{v.plate}</td>
-                  <td className="px-4 py-3 text-right font-mono tabular-nums text-ink-400">{v.totalDistanceKm.toFixed(1)}</td>
-                  <td className="px-4 py-3 text-right font-mono tabular-nums text-ink-400">{v.fuelConsumedLiters.toFixed(1)}</td>
-                  <td className="px-4 py-3 text-right font-mono tabular-nums text-ink-400">{v.alertsCount}</td>
-                  <td className="px-4 py-3 text-right font-mono tabular-nums text-ink-400">{v.maintenanceEventsCount}</td>
+                  <td className="px-4 py-3 font-medium text-zinc-100">{v.plate}</td>
+                  <td className="px-4 py-3 text-right text-zinc-400">{v.totalDistanceKm.toFixed(1)}</td>
+                  <td className="px-4 py-3 text-right text-zinc-400">{v.fuelConsumedLiters.toFixed(1)}</td>
+                  <td className="px-4 py-3 text-right text-zinc-400">{v.alertsCount}</td>
+                  <td className="px-4 py-3 text-right text-zinc-400">{v.maintenanceEventsCount}</td>
                 </tr>
               ))}
             </tbody>
-            <tfoot className="border-t border-ink-800 bg-ink-900/60 font-semibold text-ink-200">
+            <tfoot className="border-t border-white/10 bg-white/[0.03] font-semibold text-white">
               <tr>
                 <td className="px-4 py-3">Total flota</td>
-                <td className="px-4 py-3 text-right font-mono tabular-nums">{totals.totalDistanceKm.toFixed(1)}</td>
-                <td className="px-4 py-3 text-right font-mono tabular-nums">{totals.fuelConsumedLiters.toFixed(1)}</td>
-                <td className="px-4 py-3 text-right font-mono tabular-nums">{totals.alertsCount}</td>
-                <td className="px-4 py-3 text-right font-mono tabular-nums">{totals.maintenanceEventsCount}</td>
+                <td className="px-4 py-3 text-right">{totals.totalDistanceKm.toFixed(1)}</td>
+                <td className="px-4 py-3 text-right">{totals.fuelConsumedLiters.toFixed(1)}</td>
+                <td className="px-4 py-3 text-right">{totals.alertsCount}</td>
+                <td className="px-4 py-3 text-right">{totals.maintenanceEventsCount}</td>
               </tr>
             </tfoot>
           </table>

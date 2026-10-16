@@ -37,7 +37,7 @@ export function TripsSection({ vehicleId }: { vehicleId: string }) {
       {query.data && query.data.length > 0 && (
         <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
-          <thead className="table-head">
+          <thead className="bg-white/[0.03] text-[11px] uppercase tracking-wider text-zinc-500">
             <tr>
               <th className="px-3 py-2">Inicio</th>
               <th className="px-3 py-2">Fin</th>
@@ -46,14 +46,14 @@ export function TripsSection({ vehicleId }: { vehicleId: string }) {
               <th className="px-3 py-2">Velocidad promedio</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-ink-800">
+          <tbody className="divide-y divide-white/5">
             {query.data.map((trip, idx) => (
               <tr key={`${trip.startTime}-${idx}`}>
-                <td className="px-3 py-2 text-ink-400">{formatDate(trip.startTime)}</td>
-                <td className="px-3 py-2 text-ink-400">{formatDate(trip.endTime)}</td>
-                <td className="px-3 py-2 font-mono tabular-nums text-ink-400">{trip.distanceKm.toFixed(1)} km</td>
-                <td className="px-3 py-2 font-mono tabular-nums text-ink-400">{Math.round(trip.durationMinutes)} min</td>
-                <td className="px-3 py-2 font-mono tabular-nums text-ink-400">{trip.avgSpeedKph.toFixed(1)} km/h</td>
+                <td className="px-3 py-2 text-zinc-400">{formatDate(trip.startTime)}</td>
+                <td className="px-3 py-2 text-zinc-400">{formatDate(trip.endTime)}</td>
+                <td className="px-3 py-2 text-zinc-400">{trip.distanceKm.toFixed(1)} km</td>
+                <td className="px-3 py-2 text-zinc-400">{Math.round(trip.durationMinutes)} min</td>
+                <td className="px-3 py-2 text-zinc-400">{trip.avgSpeedKph.toFixed(1)} km/h</td>
               </tr>
             ))}
           </tbody>

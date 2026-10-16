@@ -75,15 +75,15 @@ export function VehicleFormModal({
       >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm font-medium text-ink-300">Placa</label>
+            <label className="mb-1 block text-sm font-medium text-zinc-200">Placa</label>
             <input
               className="field-input w-full"
               {...register('plate', { required: 'La placa es obligatoria' })}
             />
-            {errors.plate && <p className="mt-1 text-xs text-rose-400">{errors.plate.message}</p>}
+            {errors.plate && <p className="mt-1 text-xs text-red-400">{errors.plate.message}</p>}
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-ink-300">Estado</label>
+            <label className="mb-1 block text-sm font-medium text-zinc-200">Estado</label>
             <select className="field-input w-full" {...register('status')}>
               <option value="ACTIVE">Activo</option>
               <option value="MAINTENANCE">En mantenimiento</option>
@@ -94,42 +94,42 @@ export function VehicleFormModal({
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm font-medium text-ink-300">Marca</label>
+            <label className="mb-1 block text-sm font-medium text-zinc-200">Marca</label>
             <input
               className="field-input w-full"
               {...register('brand', { required: 'La marca es obligatoria' })}
             />
-            {errors.brand && <p className="mt-1 text-xs text-rose-400">{errors.brand.message}</p>}
+            {errors.brand && <p className="mt-1 text-xs text-red-400">{errors.brand.message}</p>}
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-ink-300">Modelo</label>
+            <label className="mb-1 block text-sm font-medium text-zinc-200">Modelo</label>
             <input
               className="field-input w-full"
               {...register('model', { required: 'El modelo es obligatorio' })}
             />
-            {errors.model && <p className="mt-1 text-xs text-rose-400">{errors.model.message}</p>}
+            {errors.model && <p className="mt-1 text-xs text-red-400">{errors.model.message}</p>}
           </div>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm font-medium text-ink-300">Año</label>
+            <label className="mb-1 block text-sm font-medium text-zinc-200">Año</label>
             <input
               type="number"
               className="field-input w-full"
               {...register('year', { required: 'El año es obligatorio', valueAsNumber: true })}
             />
-            {errors.year && <p className="mt-1 text-xs text-rose-400">{errors.year.message}</p>}
+            {errors.year && <p className="mt-1 text-xs text-red-400">{errors.year.message}</p>}
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-ink-300">VIN (opcional)</label>
+            <label className="mb-1 block text-sm font-medium text-zinc-200">VIN (opcional)</label>
             <input className="field-input w-full" {...register('vin')} />
           </div>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div>
-            <label className="mb-1 block text-sm font-medium text-ink-300">Odómetro (km)</label>
+            <label className="mb-1 block text-sm font-medium text-zinc-200">Odómetro (km)</label>
             <input
               type="number"
               className="field-input w-full"
@@ -137,7 +137,7 @@ export function VehicleFormModal({
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-ink-300">Km llanta instalada</label>
+            <label className="mb-1 block text-sm font-medium text-zinc-200">Km llanta instalada</label>
             <input
               type="number"
               className="field-input w-full"
@@ -145,7 +145,7 @@ export function VehicleFormModal({
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-ink-300">Vida útil llanta (km)</label>
+            <label className="mb-1 block text-sm font-medium text-zinc-200">Vida útil llanta (km)</label>
             <input
               type="number"
               className="field-input w-full"
@@ -154,7 +154,7 @@ export function VehicleFormModal({
           </div>
         </div>
 
-        {errorMessage && <div className="rounded-md bg-rose-500/10 p-2 text-sm text-rose-300">{errorMessage}</div>}
+        {errorMessage && <div className="rounded-md bg-red-500/10 p-2 text-sm text-red-300">{errorMessage}</div>}
 
         <div className="flex justify-end gap-2 pt-2">
           <button
